@@ -117,7 +117,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                 }}
             >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
+                <div className="absolute inset-0 bg-white/40" />
 
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center relative z-10">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
