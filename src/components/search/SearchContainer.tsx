@@ -138,17 +138,24 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
     return (
         <>
             {/* Hero Section */}
-            <section className="hero-gradient text-white py-8 md:py-12 relative">
+            <section className="hero-gradient text-white py-12 md:py-16 relative overflow-hidden">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="text-center md:text-left mb-6">
-                        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-1">
+                    <div className="flex flex-col items-center justify-center text-center gap-4">
+                        {/* Title */}
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mx-auto">
                             Portal Informasi Kedinasan
                         </h1>
-                        <p className="text-sm md:text-base text-white/80">
+
+                        {/* Subtitle */}
+                        <p className="text-sm md:text-base text-blue-100 mx-auto">
                             Wilayah Cabang Dinas Pendidikan Bruno
                         </p>
+
+                        {/* Search Box */}
+                        <div className="w-full max-w-xl mx-auto mt-2">
+                            <SearchBar initialValue={keyword} onSearch={handleKeywordSearch} />
+                        </div>
                     </div>
-                    <SearchBar initialValue={keyword} onSearch={handleKeywordSearch} />
                 </div>
             </section>
 
