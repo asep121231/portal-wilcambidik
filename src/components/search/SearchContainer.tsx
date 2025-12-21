@@ -4,7 +4,6 @@ import { useState, useCallback, useEffect, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SearchBar from './SearchBar'
 import SearchFilters from './SearchFilters'
-import PostCard from '@/components/ui/PostCard'
 import PostCardCompact from '@/components/ui/PostCardCompact'
 import { PostCardSkeleton } from '@/components/ui/Loading'
 import { searchPosts, SearchResult } from '@/lib/actions/search'
@@ -17,9 +16,12 @@ interface Category {
 interface SearchContainerProps {
     categories: Category[]
     initialPosts: SearchResult[]
+    initialHasMore?: boolean
 }
 
-export default function SearchContainer({ categories, initialPosts }: SearchContainerProps) {
+const POSTS_PER_PAGE = 10
+
+export default function SearchContainer({ categories, initialPosts, initialHasMore = false }: SearchContainerProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [isPending, startTransition] = useTransition()
@@ -34,17 +36,21 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
         (searchParams.get('sort') as 'asc' | 'desc') || 'desc'
     )
 
-    // Results
+    // Results & Pagination
     const [posts, setPosts] = useState<SearchResult[]>(initialPosts)
+    const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] = useState(initialHasMore)
     const [isSearching, setIsSearching] = useState(false)
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
 
     // Separate urgent and normal posts
     const urgentPosts = posts.filter(p => p.urgency === 'urgent')
     const normalPosts = posts.filter(p => p.urgency !== 'urgent')
 
-    // Update URL and search
+    // Update URL and search (resets pagination)
     const updateSearch = useCallback(async () => {
         setIsSearching(true)
+        setPage(1)
 
         const params = new URLSearchParams()
         if (keyword) params.set('q', keyword)
@@ -60,21 +66,52 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
         })
 
         try {
-            const results = await searchPosts({
+            const response = await searchPosts({
                 keyword: keyword || undefined,
                 categoryId: categoryId || undefined,
                 startDate: startDate || undefined,
                 endDate: endDate || undefined,
                 urgency: urgency || undefined,
-                sortOrder
+                sortOrder,
+                page: 1,
+                limit: POSTS_PER_PAGE
             })
-            setPosts(results)
+            setPosts(response.data)
+            setHasMore(response.hasMore)
         } catch (error) {
             console.error('Search error:', error)
         } finally {
             setIsSearching(false)
         }
     }, [keyword, categoryId, startDate, endDate, urgency, sortOrder, router])
+
+    // Load more posts
+    const loadMore = useCallback(async () => {
+        if (isLoadingMore || !hasMore) return
+
+        setIsLoadingMore(true)
+        const nextPage = page + 1
+
+        try {
+            const response = await searchPosts({
+                keyword: keyword || undefined,
+                categoryId: categoryId || undefined,
+                startDate: startDate || undefined,
+                endDate: endDate || undefined,
+                urgency: urgency || undefined,
+                sortOrder,
+                page: nextPage,
+                limit: POSTS_PER_PAGE
+            })
+            setPosts(prev => [...prev, ...response.data])
+            setHasMore(response.hasMore)
+            setPage(nextPage)
+        } catch (error) {
+            console.error('Load more error:', error)
+        } finally {
+            setIsLoadingMore(false)
+        }
+    }, [page, hasMore, isLoadingMore, keyword, categoryId, startDate, endDate, urgency, sortOrder])
 
     useEffect(() => {
         updateSearch()
@@ -83,15 +120,20 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
     const handleKeywordSearch = useCallback((newKeyword: string) => {
         setKeyword(newKeyword)
         setIsSearching(true)
+        setPage(1)
+
         searchPosts({
             keyword: newKeyword || undefined,
             categoryId: categoryId || undefined,
             startDate: startDate || undefined,
             endDate: endDate || undefined,
             urgency: urgency || undefined,
-            sortOrder
-        }).then((results) => {
-            setPosts(results)
+            sortOrder,
+            page: 1,
+            limit: POSTS_PER_PAGE
+        }).then((response) => {
+            setPosts(response.data)
+            setHasMore(response.hasMore)
             setIsSearching(false)
 
             const params = new URLSearchParams()
@@ -113,8 +155,12 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
         setEndDate('')
         setUrgency('')
         setSortOrder('desc')
+        setPage(1)
         router.push('/', { scroll: false })
-        searchPosts({}).then(setPosts)
+        searchPosts({ page: 1, limit: POSTS_PER_PAGE }).then((response) => {
+            setPosts(response.data)
+            setHasMore(response.hasMore)
+        })
     }, [router])
 
     const selectedCategoryName = categories.find(c => c.id === categoryId)?.name
@@ -141,17 +187,12 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
             <section className="hero-gradient text-white py-12 md:py-16 relative overflow-hidden">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="flex flex-col items-center justify-center text-center gap-4">
-                        {/* Title */}
                         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mx-auto">
                             Portal Informasi Kedinasan
                         </h1>
-
-                        {/* Subtitle */}
                         <p className="text-sm md:text-base text-blue-100 mx-auto">
                             Wilayah Cabang Dinas Pendidikan Bruno
                         </p>
-
-                        {/* Search Box */}
                         <div className="w-full max-w-xl mx-auto mt-2">
                             <SearchBar initialValue={keyword} onSearch={handleKeywordSearch} />
                         </div>
@@ -186,7 +227,6 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
                             ))}
                         </div>
                     ) : posts.length === 0 ? (
-                        /* Empty State */
                         <div className="text-center py-12 bg-white rounded-2xl shadow-sm">
                             <div className="w-14 h-14 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
                                 <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,6 +279,31 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
                                     {(urgency === 'urgent' ? urgentPosts : urgency === 'normal' ? normalPosts : posts).map((post) => (
                                         <PostCardCompact key={post.id} post={mapPost(post)} />
                                     ))}
+
+                                    {/* Load More Button */}
+                                    {hasMore && (
+                                        <div className="pt-4 text-center">
+                                            <button
+                                                onClick={loadMore}
+                                                disabled={isLoadingMore}
+                                                className="btn btn-secondary w-full sm:w-auto min-w-[200px]"
+                                            >
+                                                {isLoadingMore ? (
+                                                    <>
+                                                        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                                        Memuat...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                        Muat lebih banyak
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Desktop Sidebar - Urgent Posts */}

@@ -27,7 +27,15 @@ export interface SearchResult {
     attachment_count: number
 }
 
-export async function searchPosts(params: SearchParams): Promise<SearchResult[]> {
+export interface SearchResponse {
+    data: SearchResult[]
+    hasMore: boolean
+    total: number
+}
+
+const DEFAULT_LIMIT = 10
+
+export async function searchPosts(params: SearchParams): Promise<SearchResponse> {
     const supabase = await createClient()
 
     const {
@@ -39,10 +47,12 @@ export async function searchPosts(params: SearchParams): Promise<SearchResult[]>
         fileTypes,
         sortOrder = 'desc',
         page = 1,
-        limit = 20
+        limit = DEFAULT_LIMIT
     } = params
 
     const offset = (page - 1) * limit
+    // Fetch one extra to check if there are more
+    const fetchLimit = limit + 1
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase.rpc as any)('search_posts', {
@@ -53,14 +63,21 @@ export async function searchPosts(params: SearchParams): Promise<SearchResult[]>
         urgency_filter: urgency || null,
         file_types: fileTypes && fileTypes.length > 0 ? fileTypes : null,
         sort_order: sortOrder,
-        page_limit: limit,
+        page_limit: fetchLimit,
         page_offset: offset
     })
 
     if (error) {
         console.error('Search error:', error)
-        return []
+        return { data: [], hasMore: false, total: 0 }
     }
 
-    return data as SearchResult[]
+    const results = data as SearchResult[]
+    const hasMore = results.length > limit
+
+    return {
+        data: hasMore ? results.slice(0, limit) : results,
+        hasMore,
+        total: results.length
+    }
 }
