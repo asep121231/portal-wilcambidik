@@ -61,81 +61,144 @@ export default async function PostPage({ params }: PostPageProps) {
 
     const showStatus = post.urgency === 'urgent' || post.urgency === 'deadline'
 
+    // Get file extension for icon
+    const getFileIcon = (fileName: string) => {
+        const ext = fileName.split('.').pop()?.toLowerCase()
+        if (ext === 'pdf') return { icon: '📄', color: 'text-red-500', bg: 'bg-red-50' }
+        if (['doc', 'docx'].includes(ext || '')) return { icon: '📝', color: 'text-blue-500', bg: 'bg-blue-50' }
+        if (['xls', 'xlsx'].includes(ext || '')) return { icon: '📊', color: 'text-green-500', bg: 'bg-green-50' }
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(ext || '')) return { icon: '🖼️', color: 'text-purple-500', bg: 'bg-purple-50' }
+        return { icon: '📎', color: 'text-gray-500', bg: 'bg-gray-50' }
+    }
+
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Back navigation */}
-            <div className="bg-white border-b border-gray-200">
-                <div className="max-w-3xl mx-auto px-4 py-4">
+        <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-gray-50">
+            {/* Hero Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-pink-500 pt-8 pb-24">
+                <div className="max-w-4xl mx-auto px-4 lg:px-8">
+                    {/* Back Button */}
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors"
+                        className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-8 group"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        Kembali
+                        <span className="font-medium">Kembali ke Beranda</span>
                     </Link>
+
+                    {/* Badges */}
+                    <div className="flex items-center gap-3 mb-4 flex-wrap">
+                        {post.categories && (
+                            <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">
+                                {post.categories.name}
+                            </span>
+                        )}
+                        {showStatus && (
+                            <StatusBadge status={post.urgency as 'urgent' | 'deadline' | 'general' | 'archive'} />
+                        )}
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight mb-4">
+                        {post.title}
+                    </h1>
+
+                    {/* Meta Info */}
+                    <div className="flex items-center gap-4 text-white/70">
+                        <div className="flex items-center gap-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <time className="text-sm">{formattedDate}</time>
+                        </div>
+                        {post.attachments && post.attachments.length > 0 && (
+                            <div className="flex items-center gap-2">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                </svg>
+                                <span className="text-sm">{post.attachments.length} Lampiran</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Content */}
-            <article className="max-w-3xl mx-auto px-4 py-8">
-                <div className="bg-white rounded-xl border border-gray-200 p-6 md:p-8">
-                    {/* Header */}
-                    <header className="mb-6">
-                        {/* Badges */}
-                        <div className="flex items-center gap-2 mb-3 flex-wrap">
-                            {post.categories && (
-                                <span className="badge badge-primary">{post.categories.name}</span>
-                            )}
-                            {showStatus && (
-                                <StatusBadge status={post.urgency as 'urgent' | 'deadline' | 'general' | 'archive'} />
-                            )}
+            {/* Content Card */}
+            <article className="max-w-4xl mx-auto px-4 lg:px-8 -mt-16 pb-16">
+                <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden">
+                    {/* Content Body */}
+                    <div className="p-6 md:p-10">
+                        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
+                            {post.content}
                         </div>
-
-                        {/* Title */}
-                        <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 leading-tight">
-                            {post.title}
-                        </h1>
-
-                        {/* Meta */}
-                        <time className="text-sm text-gray-500">{formattedDate}</time>
-                    </header>
-
-                    {/* Body */}
-                    <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
-                        {post.content}
                     </div>
 
-                    {/* Attachments */}
+                    {/* Attachments Section */}
                     {post.attachments && post.attachments.length > 0 && (
-                        <div className="mt-8 pt-6 border-t border-gray-100">
-                            <h2 className="text-sm font-medium text-gray-900 mb-4">
-                                Lampiran ({post.attachments.length})
+                        <div className="border-t border-gray-100 bg-gray-50/50 p-6 md:p-10">
+                            <h2 className="flex items-center gap-3 text-lg font-semibold text-gray-900 mb-6">
+                                <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                    </svg>
+                                </div>
+                                <span>Lampiran ({post.attachments.length})</span>
                             </h2>
-                            <div className="space-y-2">
-                                {post.attachments.map((att) => (
-                                    <a
-                                        key={att.id}
-                                        href={att.file_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                                    >
-                                        <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                        <div className="min-w-0 flex-1">
-                                            <span className="text-sm text-gray-700 truncate block">{att.file_name}</span>
-                                        </div>
-                                        <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                    </a>
-                                ))}
+
+                            <div className="grid gap-3 md:grid-cols-2">
+                                {post.attachments.map((att) => {
+                                    const fileStyle = getFileIcon(att.file_name)
+                                    return (
+                                        <a
+                                            key={att.id}
+                                            href={att.file_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="group flex items-center gap-4 p-4 bg-white border border-gray-200 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50 rounded-xl transition-all"
+                                        >
+                                            <div className={`w-12 h-12 ${fileStyle.bg} rounded-xl flex items-center justify-center text-2xl flex-shrink-0`}>
+                                                {fileStyle.icon}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-700 transition-colors">
+                                                    {att.file_name}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                    Klik untuk mengunduh
+                                                </p>
+                                            </div>
+                                            <div className="w-10 h-10 bg-purple-100 group-hover:bg-purple-600 rounded-xl flex items-center justify-center transition-colors flex-shrink-0">
+                                                <svg className="w-5 h-5 text-purple-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                    )
+                                })}
                             </div>
                         </div>
                     )}
+                </div>
+
+                {/* Share Section */}
+                <div className="mt-8 flex items-center justify-center gap-4">
+                    <span className="text-sm text-gray-500">Bagikan:</span>
+                    <button
+                        onClick={() => {
+                            if (navigator.share) {
+                                navigator.share({ title: post.title, url: window.location.href })
+                            } else {
+                                navigator.clipboard.writeText(window.location.href)
+                            }
+                        }}
+                        className="p-2.5 bg-white border border-gray-200 hover:border-purple-300 hover:bg-purple-50 rounded-xl transition-colors"
+                        title="Salin link"
+                    >
+                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                    </button>
                 </div>
             </article>
         </div>
