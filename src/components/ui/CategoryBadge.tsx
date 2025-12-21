@@ -3,20 +3,37 @@ interface CategoryBadgeProps {
     size?: 'sm' | 'md'
 }
 
-const categoryColors: Record<string, string> = {
-    'Surat Edaran': 'bg-blue-100 text-blue-700 border-blue-200',
-    'Undangan': 'bg-purple-100 text-purple-700 border-purple-200',
-    'Pengumuman': 'bg-amber-100 text-amber-700 border-amber-200',
-    'Laporan': 'bg-green-100 text-green-700 border-green-200',
-    'Informasi Umum': 'bg-gray-100 text-gray-700 border-gray-200',
-}
+export default function CategoryBadge({ name, size = 'md' }: CategoryBadgeProps) {
+    // Color mapping based on category name
+    const getColors = (categoryName: string) => {
+        const lowerName = categoryName.toLowerCase()
 
-export default function CategoryBadge({ name, size = 'sm' }: CategoryBadgeProps) {
-    const colorClass = categoryColors[name] || 'bg-gray-100 text-gray-700 border-gray-200'
-    const sizeClass = size === 'sm' ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1.5'
+        if (lowerName.includes('surat') || lowerName.includes('edaran')) {
+            return 'bg-blue-100 text-blue-800'
+        }
+        if (lowerName.includes('undangan')) {
+            return 'bg-purple-100 text-purple-800'
+        }
+        if (lowerName.includes('pengumuman')) {
+            return 'bg-amber-100 text-amber-800'
+        }
+        if (lowerName.includes('laporan')) {
+            return 'bg-green-100 text-green-800'
+        }
+        if (lowerName.includes('informasi')) {
+            return 'bg-cyan-100 text-cyan-800'
+        }
+        return 'bg-gray-100 text-gray-800'
+    }
+
+    const sizeClasses = size === 'sm'
+        ? 'px-2.5 py-1 text-xs'
+        : 'px-3 py-1.5 text-sm'
 
     return (
-        <span className={`inline-flex items-center rounded-full border font-medium ${colorClass} ${sizeClass}`}>
+        <span
+            className={`inline-flex items-center font-medium rounded-full ${getColors(name)} ${sizeClasses}`}
+        >
             {name}
         </span>
     )

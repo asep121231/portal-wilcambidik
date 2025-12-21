@@ -82,7 +82,6 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
     // Handle keyword search (called from SearchBar with debounce)
     const handleKeywordSearch = useCallback((newKeyword: string) => {
         setKeyword(newKeyword)
-        // Trigger search immediately after keyword changes
         setIsSearching(true)
         searchPosts({
             keyword: newKeyword || undefined,
@@ -124,13 +123,13 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
     return (
         <>
             {/* Hero Section with Search */}
-            <section className="hero-gradient text-white py-12 md:py-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <section className="hero-gradient text-white py-10 md:py-16 relative">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="text-center mb-6 md:mb-8">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3">
                             Portal Informasi Kedinasan
                         </h1>
-                        <p className="text-lg md:text-xl text-primary-100 max-w-2xl mx-auto">
+                        <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto">
                             Wilayah Cabang Dinas Pendidikan Bruno
                         </p>
                     </div>
@@ -160,59 +159,64 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
             />
 
             {/* Results Section */}
-            <section className="py-8 md:py-12 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="py-6 md:py-10 bg-gray-50 min-h-[50vh]" id="info">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Results Header */}
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                    <div className="flex items-center justify-between mb-5 md:mb-6">
+                        <h2 className="text-lg md:text-xl font-bold text-gray-900">
                             {keyword ? `Hasil pencarian "${keyword}"` :
                                 selectedCategoryName ? selectedCategoryName :
                                     'Informasi Terbaru'}
                         </h2>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">
                             {posts.length} informasi
                         </span>
                     </div>
 
                     {/* Loading State */}
                     {(isSearching || isPending) ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <PostCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : posts.length === 0 ? (
                         /* Empty State */
-                        <div className="text-center py-12">
-                            <svg
-                                className="w-16 h-16 mx-auto text-gray-300 mb-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                />
-                            </svg>
-                            <h3 className="text-lg font-medium text-gray-600 mb-2">
+                        <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                <svg
+                                    className="w-8 h-8 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={1.5}
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                 Informasi tidak ditemukan
                             </h3>
-                            <p className="text-gray-500 mb-4">
-                                Coba ubah kata kunci atau filter pencarian Anda.
+                            <p className="text-sm text-gray-500 mb-5 max-w-sm mx-auto">
+                                Coba ubah kata kunci atau filter pencarian Anda untuk menemukan informasi yang tepat.
                             </p>
                             <button
                                 onClick={handleReset}
-                                className="text-primary-600 hover:text-primary-700 font-medium"
+                                className="btn btn-secondary"
                             >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
                                 Reset pencarian
                             </button>
                         </div>
                     ) : (
                         /* Results Grid */
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {posts.map((post) => (
                                 <PostCard
                                     key={post.id}

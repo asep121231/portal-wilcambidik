@@ -1,31 +1,40 @@
 export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
-    const sizeClass = {
+    const sizeClasses = {
         sm: 'w-4 h-4',
-        md: 'w-8 h-8',
-        lg: 'w-12 h-12',
-    }[size]
+        md: 'w-6 h-6',
+        lg: 'w-8 h-8'
+    }
 
     return (
-        <div className="flex items-center justify-center">
-            <div
-                className={`${sizeClass} border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin`}
-            />
-        </div>
+        <div className={`${sizeClasses[size]} border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin`} />
     )
 }
 
 export function PostCardSkeleton() {
     return (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                    <div className="skeleton h-6 w-24 rounded-full" />
-                    <div className="skeleton h-4 w-32 rounded" />
-                </div>
-                <div className="skeleton h-6 w-full rounded" />
-                <div className="skeleton h-4 w-3/4 rounded" />
-                <div className="skeleton h-4 w-1/2 rounded" />
-                <div className="skeleton h-4 w-28 rounded mt-2" />
+        <div className="card p-5 space-y-4 animate-pulse">
+            {/* Badge skeleton */}
+            <div className="flex gap-2">
+                <div className="h-6 w-20 bg-gray-200 rounded-full skeleton" />
+            </div>
+
+            {/* Title skeleton */}
+            <div className="space-y-2">
+                <div className="h-5 bg-gray-200 rounded skeleton w-full" />
+                <div className="h-5 bg-gray-200 rounded skeleton w-3/4" />
+            </div>
+
+            {/* Content skeleton */}
+            <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded skeleton w-full" />
+                <div className="h-4 bg-gray-200 rounded skeleton w-full" />
+                <div className="h-4 bg-gray-200 rounded skeleton w-2/3" />
+            </div>
+
+            {/* Footer skeleton */}
+            <div className="pt-3 border-t border-gray-100 flex justify-between">
+                <div className="h-4 w-24 bg-gray-200 rounded skeleton" />
+                <div className="h-4 w-20 bg-gray-200 rounded skeleton" />
             </div>
         </div>
     )
@@ -33,17 +42,21 @@ export function PostCardSkeleton() {
 
 export function PostDetailSkeleton() {
     return (
-        <div className="max-w-4xl mx-auto px-4 py-8">
-            <div className="skeleton h-8 w-24 rounded-full mb-4" />
-            <div className="skeleton h-10 w-full rounded mb-2" />
-            <div className="skeleton h-10 w-3/4 rounded mb-4" />
-            <div className="skeleton h-4 w-48 rounded mb-8" />
+        <div className="max-w-3xl mx-auto animate-pulse">
+            {/* Header */}
+            <div className="space-y-4 mb-8">
+                <div className="h-6 w-24 bg-gray-200 rounded-full skeleton" />
+                <div className="h-8 bg-gray-200 rounded skeleton w-full" />
+                <div className="h-8 bg-gray-200 rounded skeleton w-3/4" />
+                <div className="h-4 w-32 bg-gray-200 rounded skeleton" />
+            </div>
+
+            {/* Content */}
             <div className="space-y-3">
-                <div className="skeleton h-4 w-full rounded" />
-                <div className="skeleton h-4 w-full rounded" />
-                <div className="skeleton h-4 w-5/6 rounded" />
-                <div className="skeleton h-4 w-full rounded" />
-                <div className="skeleton h-4 w-4/5 rounded" />
+                {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="h-4 bg-gray-200 rounded skeleton w-full" />
+                ))}
+                <div className="h-4 bg-gray-200 rounded skeleton w-2/3" />
             </div>
         </div>
     )
@@ -54,7 +67,7 @@ export function PageLoading() {
         <div className="min-h-[60vh] flex items-center justify-center">
             <div className="text-center">
                 <LoadingSpinner size="lg" />
-                <p className="mt-4 text-gray-500">Memuat...</p>
+                <p className="mt-4 text-sm text-gray-500">Memuat...</p>
             </div>
         </div>
     )

@@ -37,12 +37,12 @@ export default function SearchBar({
     }, [onSearch])
 
     return (
-        <div className="relative w-full max-w-2xl mx-auto">
+        <div className="w-full max-w-xl mx-auto">
             <div className="relative">
                 {/* Search Icon */}
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg
-                        className="w-5 h-5 text-gray-400"
+                        className="w-5 h-5 text-white/60"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -62,7 +62,7 @@ export default function SearchBar({
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full pl-12 pr-12 py-4 text-base bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
+                    className="w-full pl-12 pr-12 py-3.5 text-base bg-white/15 backdrop-blur-sm border border-white/25 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
                     aria-label="Cari informasi"
                 />
 
@@ -81,8 +81,8 @@ export default function SearchBar({
             </div>
 
             {/* Search hint */}
-            <p className="mt-2 text-sm text-white/60 text-center">
-                Cari berdasarkan judul, isi berita, atau nama file lampiran
+            <p className="mt-3 text-sm text-white/50 text-center">
+                Cari berdasarkan judul, isi, atau nama file
             </p>
         </div>
     )
