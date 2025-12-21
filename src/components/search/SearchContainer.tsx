@@ -108,8 +108,18 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Hero Section */}
-            <section className="py-16 md:py-24 bg-white">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center">
+            <section
+                className="py-16 md:py-24 bg-white relative overflow-hidden"
+                style={{
+                    backgroundImage: 'url(/images/hero-bg.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            >
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
+
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center relative z-10">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                         Portal Informasi{' '}
                         <span className="gradient-text">Kedinasan</span>
