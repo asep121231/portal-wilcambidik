@@ -20,12 +20,12 @@ export default function AdminLoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E40AF] to-[#3B82F6] px-4 py-12">
             <div className="w-full max-w-md">
-                <div className="bg-white rounded-xl shadow-lg p-8">
+                <div className="bg-white rounded-2xl shadow-2xl p-8">
                     {/* Logo */}
                     <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-primary-600 rounded-xl mx-auto flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-[#1E40AF] to-[#2563EB] rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg">
                             <svg
                                 className="w-10 h-10 text-white"
                                 fill="none"
@@ -46,7 +46,10 @@ export default function AdminLoginPage() {
 
                     {/* Error message */}
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
+                            <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            </svg>
                             {error}
                         </div>
                     )}
@@ -62,7 +65,7 @@ export default function AdminLoginPage() {
                                 name="email"
                                 type="email"
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] transition-all bg-gray-50 focus:bg-white"
                                 placeholder="admin@example.com"
                             />
                         </div>
@@ -76,7 +79,7 @@ export default function AdminLoginPage() {
                                 name="password"
                                 type="password"
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] transition-all bg-gray-50 focus:bg-white"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -84,7 +87,7 @@ export default function AdminLoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full py-3.5 px-4 bg-[#1E40AF] hover:bg-[#1D4ED8] text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                         >
                             {isLoading ? (
                                 <>
@@ -92,13 +95,18 @@ export default function AdminLoginPage() {
                                     <span>Masuk...</span>
                                 </>
                             ) : (
-                                <span>Masuk</span>
+                                <>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span>Masuk ke Dashboard</span>
+                                </>
                             )}
                         </button>
                     </form>
                 </div>
 
-                <p className="text-center text-gray-500 text-sm mt-6">
+                <p className="text-center text-white/80 text-sm mt-6">
                     Portal Informasi Kedinasan Wilcambidik Bruno
                 </p>
             </div>
