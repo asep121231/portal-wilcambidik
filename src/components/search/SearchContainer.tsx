@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import SearchBar from './SearchBar'
 import SearchFilters from './SearchFilters'
 import PostCard from '@/components/ui/PostCard'
+import PostCardCompact from '@/components/ui/PostCardCompact'
 import { PostCardSkeleton } from '@/components/ui/Loading'
 import { searchPosts, SearchResult } from '@/lib/actions/search'
 
@@ -37,11 +38,14 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
     const [posts, setPosts] = useState<SearchResult[]>(initialPosts)
     const [isSearching, setIsSearching] = useState(false)
 
+    // Separate urgent and normal posts
+    const urgentPosts = posts.filter(p => p.urgency === 'urgent')
+    const normalPosts = posts.filter(p => p.urgency !== 'urgent')
+
     // Update URL and search
     const updateSearch = useCallback(async () => {
         setIsSearching(true)
 
-        // Build URL params
         const params = new URLSearchParams()
         if (keyword) params.set('q', keyword)
         if (categoryId) params.set('category', categoryId)
@@ -50,13 +54,11 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
         if (urgency) params.set('urgency', urgency)
         if (sortOrder !== 'desc') params.set('sort', sortOrder)
 
-        // Update URL without reload
         const newUrl = params.toString() ? `/?${params.toString()}` : '/'
         startTransition(() => {
             router.push(newUrl, { scroll: false })
         })
 
-        // Fetch results
         try {
             const results = await searchPosts({
                 keyword: keyword || undefined,
@@ -74,12 +76,10 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
         }
     }, [keyword, categoryId, startDate, endDate, urgency, sortOrder, router])
 
-    // Trigger search when filters change
     useEffect(() => {
         updateSearch()
     }, [categoryId, startDate, endDate, urgency, sortOrder])
 
-    // Handle keyword search (called from SearchBar with debounce)
     const handleKeywordSearch = useCallback((newKeyword: string) => {
         setKeyword(newKeyword)
         setIsSearching(true)
@@ -94,7 +94,6 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
             setPosts(results)
             setIsSearching(false)
 
-            // Update URL
             const params = new URLSearchParams()
             if (newKeyword) params.set('q', newKeyword)
             if (categoryId) params.set('category', categoryId)
@@ -120,25 +119,36 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
 
     const selectedCategoryName = categories.find(c => c.id === categoryId)?.name
 
+    const mapPost = (post: SearchResult) => ({
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        category_id: post.category_id,
+        status: post.status as 'draft' | 'published',
+        urgency: (post.urgency || 'normal') as 'urgent' | 'normal',
+        created_at: post.created_at,
+        updated_at: post.updated_at,
+        categories: post.category_name ? {
+            id: post.category_id || '',
+            name: post.category_name,
+            created_at: ''
+        } : null
+    })
+
     return (
         <>
-            {/* Hero Section with Search */}
-            <section className="hero-gradient text-white py-10 md:py-16 relative">
+            {/* Hero Section */}
+            <section className="hero-gradient text-white py-8 md:py-12 relative">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="text-center mb-6 md:mb-8">
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3">
+                    <div className="text-center md:text-left mb-6">
+                        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-1">
                             Portal Informasi Kedinasan
                         </h1>
-                        <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto">
+                        <p className="text-sm md:text-base text-white/80">
                             Wilayah Cabang Dinas Pendidikan Bruno
                         </p>
                     </div>
-
-                    {/* Search Bar */}
-                    <SearchBar
-                        initialValue={keyword}
-                        onSearch={handleKeywordSearch}
-                    />
+                    <SearchBar initialValue={keyword} onSearch={handleKeywordSearch} />
                 </div>
             </section>
 
@@ -158,85 +168,84 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
                 onReset={handleReset}
             />
 
-            {/* Results Section */}
-            <section className="py-6 md:py-10 bg-gray-50 min-h-[50vh]" id="info">
+            {/* Main Content */}
+            <section className="py-6 md:py-8 bg-gray-50 min-h-[60vh]" id="info">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Results Header */}
-                    <div className="flex items-center justify-between mb-5 md:mb-6">
-                        <h2 className="text-lg md:text-xl font-bold text-gray-900">
-                            {keyword ? `Hasil pencarian "${keyword}"` :
-                                selectedCategoryName ? selectedCategoryName :
-                                    'Informasi Terbaru'}
-                        </h2>
-                        <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">
-                            {posts.length} informasi
-                        </span>
-                    </div>
 
-                    {/* Loading State */}
                     {(isSearching || isPending) ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                            {Array.from({ length: 6 }).map((_, i) => (
+                        <div className="space-y-4">
+                            {Array.from({ length: 4 }).map((_, i) => (
                                 <PostCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : posts.length === 0 ? (
                         /* Empty State */
-                        <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-                            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                <svg
-                                    className="w-8 h-8 text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={1.5}
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                    />
+                        <div className="text-center py-12 bg-white rounded-2xl shadow-sm">
+                            <div className="w-14 h-14 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
+                                <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                Informasi tidak ditemukan
-                            </h3>
-                            <p className="text-sm text-gray-500 mb-5 max-w-sm mx-auto">
-                                Coba ubah kata kunci atau filter pencarian Anda untuk menemukan informasi yang tepat.
-                            </p>
-                            <button
-                                onClick={handleReset}
-                                className="btn btn-secondary"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
+                            <h3 className="text-base font-semibold text-gray-900 mb-1">Informasi tidak ditemukan</h3>
+                            <p className="text-sm text-gray-500 mb-4">Coba ubah kata kunci atau filter pencarian.</p>
+                            <button onClick={handleReset} className="btn btn-secondary text-sm">
                                 Reset pencarian
                             </button>
                         </div>
                     ) : (
-                        /* Results Grid */
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                            {posts.map((post) => (
-                                <PostCard
-                                    key={post.id}
-                                    post={{
-                                        id: post.id,
-                                        title: post.title,
-                                        content: post.content,
-                                        category_id: post.category_id,
-                                        status: post.status as 'draft' | 'published',
-                                        urgency: (post.urgency || 'normal') as 'urgent' | 'normal',
-                                        created_at: post.created_at,
-                                        updated_at: post.updated_at,
-                                        categories: post.category_name ? {
-                                            id: post.category_id || '',
-                                            name: post.category_name,
-                                            created_at: ''
-                                        } : null
-                                    }}
-                                />
-                            ))}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Main Column - Normal Posts */}
+                            <div className="lg:col-span-2 space-y-4">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h2 className="text-lg font-bold text-gray-900">
+                                        {keyword ? `Hasil: "${keyword}"` : selectedCategoryName || 'Informasi Terbaru'}
+                                    </h2>
+                                    <span className="text-xs text-gray-500 bg-white px-2.5 py-1 rounded-full shadow-sm">
+                                        {posts.length} info
+                                    </span>
+                                </div>
+
+                                {/* Posts List */}
+                                <div className="space-y-3">
+                                    {(urgency === 'urgent' ? urgentPosts : urgency === 'normal' ? normalPosts : normalPosts).map((post) => (
+                                        <PostCardCompact key={post.id} post={mapPost(post)} />
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sidebar - Urgent Posts */}
+                            {!urgency && urgentPosts.length > 0 && (
+                                <div className="lg:col-span-1">
+                                    <div className="bg-red-50 rounded-2xl p-4 border border-red-100 sticky top-32">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="font-bold text-red-900 text-sm">Informasi Penting</h3>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {urgentPosts.slice(0, 5).map((post) => (
+                                                <a
+                                                    key={post.id}
+                                                    href={`/berita/${post.id}`}
+                                                    className="block p-3 bg-white rounded-xl hover:shadow-sm transition-shadow"
+                                                >
+                                                    <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                                                        {post.title}
+                                                    </h4>
+                                                    <time className="text-xs text-gray-500">
+                                                        {new Date(post.created_at).toLocaleDateString('id-ID', {
+                                                            day: 'numeric', month: 'short'
+                                                        })}
+                                                    </time>
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
