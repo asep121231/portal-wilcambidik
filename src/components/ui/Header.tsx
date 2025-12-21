@@ -27,56 +27,51 @@ export default function Header() {
 
     return (
         <>
-            <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'bg-white/95 backdrop-blur-sm shadow-lg'
-                    : 'bg-white border-b border-gray-100'
+            <header className={`fixed top-0 left-0 right-0 z-50 bg-white border-b transition-colors ${isScrolled ? 'border-gray-200' : 'border-gray-100'
                 }`}>
-                <div className="container-main">
+                <div className="container-gov">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
-                        <Link href="/" className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md">
-                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <Link href="/" className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-blue-800 rounded-lg flex items-center justify-center">
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
                             </div>
                             <div className="hidden sm:block">
-                                <div className="font-bold text-gray-900">Wilcambidik Bruno</div>
-                                <div className="text-xs text-gray-500">Portal Informasi Kedinasan</div>
+                                <div className="text-sm font-semibold text-gray-900">Wilcambidik Bruno</div>
+                                <div className="text-xs text-gray-500">Portal Kedinasan</div>
                             </div>
                         </Link>
 
-                        {/* Desktop Navigation */}
+                        {/* Desktop Nav */}
                         <nav className="hidden md:flex items-center gap-1">
-                            {navigation.map((item) => {
-                                const isActive = pathname === item.href
-                                return (
-                                    <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${isActive
-                                                ? 'text-blue-600 bg-blue-50'
-                                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                )
-                            })}
+                            {navigation.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname === item.href
+                                            ? 'text-blue-800 bg-blue-50'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {item.name}
+                                </Link>
+                            ))}
                             <Link
                                 href="/admin"
-                                className="ml-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all"
+                                className="ml-2 px-3 py-2 bg-blue-800 text-white text-sm font-medium rounded-md hover:bg-blue-900 transition-colors"
                             >
-                                Admin Panel
+                                Admin
                             </Link>
                         </nav>
 
-                        {/* Mobile Menu Button */}
+                        {/* Mobile Menu */}
                         <button
                             onClick={() => setIsDrawerOpen(true)}
-                            className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                            className="md:hidden p-2 text-gray-600 hover:text-gray-900"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
@@ -85,30 +80,24 @@ export default function Header() {
             </header>
 
             {/* Mobile Drawer */}
-            <div
-                className={`drawer-overlay ${isDrawerOpen ? 'open' : ''}`}
-                onClick={() => setIsDrawerOpen(false)}
-            />
+            <div className={`drawer-overlay ${isDrawerOpen ? 'open' : ''}`} onClick={() => setIsDrawerOpen(false)} />
             <div className={`drawer ${isDrawerOpen ? 'open' : ''}`}>
-                <div className="p-6">
-                    <div className="flex items-center justify-between mb-8">
-                        <span className="font-bold text-lg text-gray-900">Menu</span>
-                        <button
-                            onClick={() => setIsDrawerOpen(false)}
-                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-4">
+                    <div className="flex items-center justify-between mb-6">
+                        <span className="font-semibold text-gray-900">Menu</span>
+                        <button onClick={() => setIsDrawerOpen(false)} className="p-2 text-gray-500">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <nav className="space-y-2">
+                    <nav className="space-y-1">
                         {navigation.map((item) => (
                             <Link
                                 key={item.name}
                                 href={item.href}
                                 onClick={() => setIsDrawerOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl font-medium"
+                                className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
                             >
                                 {item.name}
                             </Link>
@@ -116,7 +105,7 @@ export default function Header() {
                         <Link
                             href="/admin"
                             onClick={() => setIsDrawerOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 mt-4 bg-blue-600 text-white rounded-xl font-medium"
+                            className="block px-3 py-2.5 mt-2 text-sm bg-blue-800 text-white rounded-md"
                         >
                             Admin Panel
                         </Link>
@@ -124,7 +113,6 @@ export default function Header() {
                 </div>
             </div>
 
-            {/* Spacer for fixed header */}
             <div className="h-16" />
         </>
     )
