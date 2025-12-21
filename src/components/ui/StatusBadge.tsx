@@ -5,24 +5,24 @@ interface StatusBadgeProps {
 
 const statusConfig = {
     urgent: {
-        label: 'Mendesak',
+        label: 'MENDESAK',
         className: 'badge-danger',
     },
     deadline: {
-        label: 'Batas Waktu',
+        label: 'BATAS WAKTU',
         className: 'badge-warning',
     },
     general: {
-        label: 'Umum',
+        label: 'UMUM',
         className: 'badge-primary',
     },
     archive: {
-        label: 'Arsip',
+        label: 'ARSIP',
         className: 'badge-neutral',
     }
 }
 
-export default function StatusBadge({ status, size = 'sm' }: StatusBadgeProps) {
+export default function StatusBadge({ status }: StatusBadgeProps) {
     const config = statusConfig[status] || statusConfig.general
 
     return (

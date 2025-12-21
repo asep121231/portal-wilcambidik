@@ -20,21 +20,21 @@ export default function PostCard({
 }: PostCardProps) {
     const formattedDate = new Date(createdAt).toLocaleDateString('id-ID', {
         day: 'numeric',
-        month: 'short',
+        month: 'long',
         year: 'numeric',
     })
 
-    const excerpt = content.length > 120
-        ? content.substring(0, 120) + '...'
+    const excerpt = content.length > 150
+        ? content.substring(0, 150) + '...'
         : content
 
     const showStatus = urgency === 'urgent' || urgency === 'deadline'
 
     return (
-        <Link href={`/berita/${id}`} className="block">
-            <article className="card p-4">
+        <Link href={`/berita/${id}`} className="block group">
+            <article className="card p-6">
                 {/* Top: Badges */}
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <div className="flex items-center gap-2 mb-4 flex-wrap">
                     {categoryName && (
                         <span className="badge badge-primary">{categoryName}</span>
                     )}
@@ -44,19 +44,24 @@ export default function PostCard({
                 </div>
 
                 {/* Title */}
-                <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2 leading-snug">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-purple-700 transition-colors">
                     {title}
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-xs text-gray-600 line-clamp-2 mb-3 leading-relaxed">
+                <p className="text-gray-600 line-clamp-3 mb-4 text-base leading-relaxed">
                     {excerpt}
                 </p>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between text-xs">
-                    <time className="text-gray-500">{formattedDate}</time>
-                    <span className="text-blue-700 font-medium">Baca →</span>
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <time className="text-sm text-gray-500">{formattedDate}</time>
+                    <span className="text-sm font-medium text-purple-600 group-hover:text-purple-700 flex items-center gap-1">
+                        Baca selengkapnya
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                    </span>
                 </div>
             </article>
         </Link>
