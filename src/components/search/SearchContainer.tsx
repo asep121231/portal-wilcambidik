@@ -193,60 +193,82 @@ export default function SearchContainer({ categories, initialPosts }: SearchCont
                             </button>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* Main Column - Normal Posts */}
-                            <div className="lg:col-span-2 space-y-4">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h2 className="text-lg font-bold text-gray-900">
-                                        {keyword ? `Hasil: "${keyword}"` : selectedCategoryName || 'Informasi Terbaru'}
-                                    </h2>
-                                    <span className="text-xs text-gray-500 bg-white px-2.5 py-1 rounded-full shadow-sm">
-                                        {posts.length} info
-                                    </span>
-                                </div>
-
-                                {/* Posts List */}
-                                <div className="space-y-3">
-                                    {(urgency === 'urgent' ? urgentPosts : urgency === 'normal' ? normalPosts : normalPosts).map((post) => (
-                                        <PostCardCompact key={post.id} post={mapPost(post)} />
-                                    ))}
-                                </div>
+                        <>
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-gray-900">
+                                    {keyword ? `Hasil: "${keyword}"` : selectedCategoryName || 'Informasi Terbaru'}
+                                </h2>
+                                <span className="text-xs text-gray-500 bg-white px-2.5 py-1 rounded-full shadow-sm">
+                                    {posts.length} info
+                                </span>
                             </div>
 
-                            {/* Sidebar - Urgent Posts */}
+                            {/* Urgent Posts Banner (Mobile) */}
                             {!urgency && urgentPosts.length > 0 && (
-                                <div className="lg:col-span-1">
-                                    <div className="bg-red-50 rounded-2xl p-4 border border-red-100 sticky top-32">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                                <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                            <h3 className="font-bold text-red-900 text-sm">Informasi Penting</h3>
+                                <div className="lg:hidden bg-red-50 rounded-xl p-4 border border-red-100 mb-4">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-7 h-7 bg-red-100 rounded-full flex items-center justify-center">
+                                            <svg className="w-3.5 h-3.5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
                                         </div>
-                                        <div className="space-y-2">
-                                            {urgentPosts.slice(0, 5).map((post) => (
-                                                <a
-                                                    key={post.id}
-                                                    href={`/berita/${post.id}`}
-                                                    className="block p-3 bg-white rounded-xl hover:shadow-sm transition-shadow"
-                                                >
-                                                    <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
-                                                        {post.title}
-                                                    </h4>
-                                                    <time className="text-xs text-gray-500">
-                                                        {new Date(post.created_at).toLocaleDateString('id-ID', {
-                                                            day: 'numeric', month: 'short'
-                                                        })}
-                                                    </time>
-                                                </a>
-                                            ))}
-                                        </div>
+                                        <h3 className="font-bold text-red-900 text-sm">Informasi Penting</h3>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {urgentPosts.slice(0, 3).map((post) => (
+                                            <a key={post.id} href={`/berita/${post.id}`} className="block p-3 bg-white rounded-lg">
+                                                <h4 className="text-sm font-medium text-gray-900 line-clamp-1">{post.title}</h4>
+                                            </a>
+                                        ))}
                                     </div>
                                 </div>
                             )}
-                        </div>
+
+                            {/* Desktop: 2 or 3 Column Layout */}
+                            <div className={`grid grid-cols-1 gap-6 ${!urgency && urgentPosts.length > 0 ? 'lg:grid-cols-3' : ''}`}>
+                                {/* Main Column - Posts */}
+                                <div className={`space-y-3 ${!urgency && urgentPosts.length > 0 ? 'lg:col-span-2' : ''}`}>
+                                    {(urgency === 'urgent' ? urgentPosts : urgency === 'normal' ? normalPosts : posts).map((post) => (
+                                        <PostCardCompact key={post.id} post={mapPost(post)} />
+                                    ))}
+                                </div>
+
+                                {/* Desktop Sidebar - Urgent Posts */}
+                                {!urgency && urgentPosts.length > 0 && (
+                                    <div className="hidden lg:block lg:col-span-1">
+                                        <div className="bg-red-50 rounded-2xl p-4 border border-red-100 sticky top-32">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                                    <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                                <h3 className="font-bold text-red-900 text-sm">Informasi Penting</h3>
+                                            </div>
+                                            <div className="space-y-2">
+                                                {urgentPosts.slice(0, 5).map((post) => (
+                                                    <a
+                                                        key={post.id}
+                                                        href={`/berita/${post.id}`}
+                                                        className="block p-3 bg-white rounded-xl hover:shadow-sm transition-shadow"
+                                                    >
+                                                        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                                                            {post.title}
+                                                        </h4>
+                                                        <time className="text-xs text-gray-500">
+                                                            {new Date(post.created_at).toLocaleDateString('id-ID', {
+                                                                day: 'numeric', month: 'short'
+                                                            })}
+                                                        </time>
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </>
                     )}
                 </div>
             </section>
