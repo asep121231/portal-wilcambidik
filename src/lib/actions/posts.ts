@@ -57,6 +57,7 @@ export async function createPost(formData: FormData) {
     const content = formData.get('content') as string
     const categoryId = formData.get('category_id') as string
     const status = formData.get('status') as 'draft' | 'published'
+    const urgency = formData.get('urgency') as string || 'general'
 
     const { data, error } = await supabase
         .from('posts')
@@ -65,6 +66,7 @@ export async function createPost(formData: FormData) {
             content,
             category_id: categoryId || null,
             status: status || 'draft',
+            urgency,
         })
         .select()
         .single()
@@ -87,6 +89,7 @@ export async function updatePost(id: string, formData: FormData) {
     const content = formData.get('content') as string
     const categoryId = formData.get('category_id') as string
     const status = formData.get('status') as 'draft' | 'published'
+    const urgency = formData.get('urgency') as string || 'general'
 
     const { data, error } = await supabase
         .from('posts')
@@ -95,6 +98,7 @@ export async function updatePost(id: string, formData: FormData) {
             content,
             category_id: categoryId || null,
             status: status || 'draft',
+            urgency,
         })
         .eq('id', id)
         .select()

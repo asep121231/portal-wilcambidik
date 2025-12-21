@@ -138,19 +138,39 @@ export default function PostForm({ categories, post }: PostFormProps) {
                 </div>
 
                 {/* Status */}
-                <div>
-                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-                        Status
-                    </label>
-                    <select
-                        id="status"
-                        name="status"
-                        defaultValue={post?.status || 'draft'}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    >
-                        <option value="draft">Draft</option>
-                        <option value="published">Publikasi</option>
-                    </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+                            Status Publikasi
+                        </label>
+                        <select
+                            id="status"
+                            name="status"
+                            defaultValue={post?.status || 'draft'}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="draft">📝 Draft</option>
+                            <option value="published">✅ Publikasi</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-2">
+                            Tingkat Kepentingan
+                        </label>
+                        <select
+                            id="urgency"
+                            name="urgency"
+                            defaultValue={post?.urgency || 'general'}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="urgent">🔴 Mendesak</option>
+                            <option value="deadline">🟡 Batas Waktu</option>
+                            <option value="general">🔵 Umum</option>
+                            <option value="archive">⚫ Arsip</option>
+                        </select>
+                        <p className="mt-1 text-xs text-gray-500">Pilih tingkat kepentingan berita</p>
+                    </div>
                 </div>
             </div>
 
