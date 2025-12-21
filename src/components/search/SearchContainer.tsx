@@ -115,7 +115,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                         <span className="gradient-text">Kedinasan</span>
                     </h1>
                     <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-                        Pusat informasi resmi dari Wilayah Cabang Bidang Diklatpim Bruno.
+                        Pusat informasi resmi dari Wilayah Cabang Bidang Pendidikan Bruno.
                         Temukan pengumuman, berita, dan dokumen penting.
                     </p>
 
@@ -156,8 +156,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                         <button
                             onClick={() => handleCategoryChange('')}
                             className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${!currentCategory
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
-                                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
+                                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                                 }`}
                         >
                             Semua
@@ -167,8 +167,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                 key={cat.id}
                                 onClick={() => handleCategoryChange(cat.id)}
                                 className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${currentCategory === cat.id
-                                        ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
-                                        : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                    ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
+                                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                                     }`}
                             >
                                 {cat.name}
@@ -226,8 +226,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                         key={page}
                                         onClick={() => handlePageChange(page)}
                                         className={`w-10 h-10 rounded-full font-medium transition-colors ${page === currentPage
-                                                ? 'bg-purple-600 text-white'
-                                                : 'text-gray-600 hover:bg-gray-100'
+                                            ? 'bg-purple-600 text-white'
+                                            : 'text-gray-600 hover:bg-gray-100'
                                             }`}
                                     >
                                         {page}

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | Wilcambidik Bruno",
   },
   description:
-    "Portal resmi untuk menyampaikan update informasi kedinasan kepada satuan pendidikan Sekolah Dasar di Wilayah Cabang Dinas Pendidikan Bruno.",
+    "Portal resmi untuk menyampaikan update informasi kedinasan kepada satuan pendidikan Sekolah Dasar di Wilayah Cabang Bidang Pendidikan Bruno.",
   keywords: [
     "wilcambidik bruno",
     "portal informasi",
