@@ -50,23 +50,25 @@ export async function getPost(id: string) {
     return data as PostDetail
 }
 
-export async function createPost(formData: FormData) {
-    const supabase = await createClient()
+interface PostInput {
+    title: string
+    content: string
+    category_id?: string | null
+    status?: 'draft' | 'published'
+    urgency?: 'urgent' | 'deadline' | 'general' | 'archive'
+}
 
-    const title = formData.get('title') as string
-    const content = formData.get('content') as string
-    const categoryId = formData.get('category_id') as string
-    const status = formData.get('status') as 'draft' | 'published'
-    const urgency = formData.get('urgency') as string || 'general'
+export async function createPost(input: PostInput) {
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('posts')
         .insert({
-            title,
-            content,
-            category_id: categoryId || null,
-            status: status || 'draft',
-            urgency,
+            title: input.title,
+            content: input.content,
+            category_id: input.category_id || null,
+            status: input.status || 'draft',
+            urgency: input.urgency || 'general',
         })
         .select()
         .single()
@@ -82,23 +84,17 @@ export async function createPost(formData: FormData) {
     return { data }
 }
 
-export async function updatePost(id: string, formData: FormData) {
+export async function updatePost(id: string, input: PostInput) {
     const supabase = await createClient()
-
-    const title = formData.get('title') as string
-    const content = formData.get('content') as string
-    const categoryId = formData.get('category_id') as string
-    const status = formData.get('status') as 'draft' | 'published'
-    const urgency = formData.get('urgency') as string || 'general'
 
     const { data, error } = await supabase
         .from('posts')
         .update({
-            title,
-            content,
-            category_id: categoryId || null,
-            status: status || 'draft',
-            urgency,
+            title: input.title,
+            content: input.content,
+            category_id: input.category_id || null,
+            status: input.status || 'draft',
+            urgency: input.urgency || 'general',
         })
         .eq('id', id)
         .select()
@@ -135,10 +131,21 @@ export async function deletePost(id: string) {
     return { success: true }
 }
 
-export async function togglePostStatus(id: string, currentStatus: string) {
+export async function togglePostStatus(id: string) {
     const supabase = await createClient()
 
-    const newStatus = currentStatus === 'published' ? 'draft' : 'published'
+    // Get current status first
+    const { data: post } = await supabase
+        .from('posts')
+        .select('status')
+        .eq('id', id)
+        .single()
+
+    if (!post) {
+        return { error: 'Post not found' }
+    }
+
+    const newStatus = post.status === 'published' ? 'draft' : 'published'
 
     const { error } = await supabase
         .from('posts')

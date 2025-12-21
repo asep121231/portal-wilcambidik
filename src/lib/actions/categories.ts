@@ -20,10 +20,8 @@ export async function getCategories() {
     return data as Category[]
 }
 
-export async function createCategory(formData: FormData) {
+export async function createCategory(name: string) {
     const supabase = await createClient()
-
-    const name = formData.get('name') as string
 
     if (!name || !name.trim()) {
         return { error: 'Nama kategori harus diisi' }
@@ -49,10 +47,8 @@ export async function createCategory(formData: FormData) {
     return { data }
 }
 
-export async function updateCategory(id: string, formData: FormData) {
+export async function updateCategory(id: string, name: string) {
     const supabase = await createClient()
-
-    const name = formData.get('name') as string
 
     if (!name || !name.trim()) {
         return { error: 'Nama kategori harus diisi' }

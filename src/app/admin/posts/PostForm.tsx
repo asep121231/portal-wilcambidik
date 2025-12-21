@@ -2,254 +2,247 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { createPost, updatePost } from '@/lib/actions/posts'
 import { uploadAttachment, deleteAttachment } from '@/lib/actions/attachments'
-import type { Category, PostDetail, Attachment } from '@/types/database'
+
+interface Category {
+    id: string
+    name: string
+}
+
+interface Attachment {
+    id: string
+    file_name: string
+    file_url: string
+}
 
 interface PostFormProps {
     categories: Category[]
-    post?: PostDetail
+    existingPost?: {
+        id: string
+        title: string
+        content: string
+        category_id: string | null
+        status: string
+        urgency: string
+        attachments?: Attachment[]
+    }
 }
 
-export default function PostForm({ categories, post }: PostFormProps) {
+export default function PostForm({ categories, existingPost }: PostFormProps) {
     const router = useRouter()
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const [attachments, setAttachments] = useState<Attachment[]>(post?.attachments || [])
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState('')
+
+    const [title, setTitle] = useState(existingPost?.title || '')
+    const [content, setContent] = useState(existingPost?.content || '')
+    const [categoryId, setCategoryId] = useState(existingPost?.category_id || '')
+    const [status, setStatus] = useState(existingPost?.status || 'draft')
+    const [urgency, setUrgency] = useState(existingPost?.urgency || 'general')
+    const [attachments, setAttachments] = useState<Attachment[]>(existingPost?.attachments || [])
     const [isUploading, setIsUploading] = useState(false)
 
-    async function handleSubmit(formData: FormData) {
-        setIsSubmitting(true)
-        setError(null)
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
+        setIsLoading(true)
 
         try {
-            const result = post
-                ? await updatePost(post.id, formData)
-                : await createPost(formData)
-
-            if (result.error) {
-                setError(result.error)
-                setIsSubmitting(false)
-                return
+            if (existingPost) {
+                await updatePost(existingPost.id, {
+                    title,
+                    content,
+                    category_id: categoryId || null,
+                    status: status as 'draft' | 'published',
+                    urgency: urgency as 'urgent' | 'deadline' | 'general' | 'archive'
+                })
+            } else {
+                await createPost({
+                    title,
+                    content,
+                    category_id: categoryId || null,
+                    status: status as 'draft' | 'published',
+                    urgency: urgency as 'urgent' | 'deadline' | 'general' | 'archive'
+                })
             }
-
             router.push('/admin/posts')
             router.refresh()
-        } catch (err) {
-            setError('Terjadi kesalahan. Silakan coba lagi.')
-            setIsSubmitting(false)
+        } catch {
+            setError('Gagal menyimpan berita')
+        } finally {
+            setIsLoading(false)
         }
     }
 
-    async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-        if (!post || !e.target.files?.length) return
-
-        const file = e.target.files[0]
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || !existingPost) return
         setIsUploading(true)
 
-        const formData = new FormData()
-        formData.append('file', file)
-
-        const result = await uploadAttachment(post.id, formData)
-
-        if (result.error) {
-            alert(result.error)
-        } else if (result.data) {
-            setAttachments([...attachments, result.data])
+        for (const file of Array.from(e.target.files)) {
+            try {
+                const result = await uploadAttachment(existingPost.id, file)
+                if (result.data) {
+                    setAttachments(prev => [...prev, result.data])
+                }
+            } catch (err) {
+                console.error('Upload error:', err)
+            }
         }
 
         setIsUploading(false)
         e.target.value = ''
     }
 
-    async function handleDeleteAttachment(attachment: Attachment) {
-        if (!post) return
-        if (!confirm('Apakah Anda yakin ingin menghapus lampiran ini?')) return
-
-        const result = await deleteAttachment(attachment.id, attachment.file_url, post.id)
-
-        if (result.error) {
-            alert(result.error)
-        } else {
-            setAttachments(attachments.filter((a) => a.id !== attachment.id))
-        }
+    const handleDeleteAttachment = async (attachmentId: string) => {
+        if (!confirm('Hapus lampiran ini?')) return
+        await deleteAttachment(attachmentId)
+        setAttachments(prev => prev.filter(a => a.id !== attachmentId))
     }
 
     return (
-        <form action={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
                     {error}
                 </div>
             )}
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
-                {/* Title */}
-                <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                        Judul <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        id="title"
-                        name="title"
-                        type="text"
-                        required
-                        defaultValue={post?.title || ''}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Masukkan judul berita"
-                    />
-                </div>
+            {/* Title */}
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Judul <span className="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                    placeholder="Masukkan judul berita"
+                    className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+            </div>
 
-                {/* Category */}
+            {/* Content */}
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Isi Berita <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    required
+                    rows={8}
+                    placeholder="Tulis isi berita di sini..."
+                    className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                />
+            </div>
+
+            {/* Category & Status Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Kategori
                     </label>
                     <select
-                        id="category_id"
-                        name="category_id"
-                        defaultValue={post?.category_id || ''}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                        className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                     >
                         <option value="">Pilih Kategori</option>
-                        {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                                {category.name}
-                            </option>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </select>
                 </div>
 
-                {/* Content */}
                 <div>
-                    <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                        Isi Berita <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Status
                     </label>
-                    <textarea
-                        id="content"
-                        name="content"
-                        required
-                        rows={10}
-                        defaultValue={post?.content || ''}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-y"
-                        placeholder="Tulis isi berita di sini..."
-                    />
+                    <select
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    >
+                        <option value="draft">Draft</option>
+                        <option value="published">Publikasi</option>
+                    </select>
                 </div>
 
-                {/* Status */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-                            Status Publikasi
-                        </label>
-                        <select
-                            id="status"
-                            name="status"
-                            defaultValue={post?.status || 'draft'}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        >
-                            <option value="draft">📝 Draft</option>
-                            <option value="published">✅ Publikasi</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-2">
-                            Tingkat Kepentingan
-                        </label>
-                        <select
-                            id="urgency"
-                            name="urgency"
-                            defaultValue={post?.urgency || 'general'}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        >
-                            <option value="urgent">🔴 Mendesak</option>
-                            <option value="deadline">🟡 Batas Waktu</option>
-                            <option value="general">🔵 Umum</option>
-                            <option value="archive">⚫ Arsip</option>
-                        </select>
-                        <p className="mt-1 text-xs text-gray-500">Pilih tingkat kepentingan berita</p>
-                    </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Tingkat Kepentingan
+                    </label>
+                    <select
+                        value={urgency}
+                        onChange={(e) => setUrgency(e.target.value)}
+                        className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    >
+                        <option value="general">Umum</option>
+                        <option value="urgent">Mendesak</option>
+                        <option value="deadline">Batas Waktu</option>
+                        <option value="archive">Arsip</option>
+                    </select>
                 </div>
             </div>
 
-            {/* Attachments (only for edit) */}
-            {post && (
-                <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">Lampiran</h3>
-                        <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer">
-                            {isUploading ? (
-                                <div className="w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                </svg>
-                            )}
-                            <span>Upload File</span>
-                            <input
-                                type="file"
-                                className="hidden"
-                                onChange={handleFileUpload}
-                                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-                                disabled={isUploading}
-                            />
-                        </label>
-                    </div>
+            {/* Attachments (only for existing post) */}
+            {existingPost && (
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Lampiran
+                    </label>
 
-                    {attachments.length === 0 ? (
-                        <p className="text-gray-500 text-sm">Belum ada lampiran</p>
-                    ) : (
-                        <div className="space-y-2">
-                            {attachments.map((attachment) => (
-                                <div
-                                    key={attachment.id}
-                                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                                >
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                                        </svg>
-                                        <span className="text-sm text-gray-700 truncate">{attachment.file_name}</span>
-                                    </div>
+                    {attachments.length > 0 && (
+                        <div className="space-y-2 mb-3">
+                            {attachments.map((att) => (
+                                <div key={att.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-sm text-gray-700 truncate">{att.file_name}</span>
                                     <button
                                         type="button"
-                                        onClick={() => handleDeleteAttachment(attachment)}
-                                        className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                                        onClick={() => handleDeleteAttachment(att.id)}
+                                        className="text-red-500 hover:text-red-700 text-xs"
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
+                                        Hapus
                                     </button>
                                 </div>
                             ))}
                         </div>
                     )}
+
+                    <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-400 cursor-pointer transition-colors">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <span className="text-sm text-gray-500">
+                            {isUploading ? 'Mengunggah...' : 'Klik untuk upload file'}
+                        </span>
+                        <input
+                            type="file"
+                            onChange={handleFileUpload}
+                            disabled={isUploading}
+                            multiple
+                            className="hidden"
+                        />
+                    </label>
                 </div>
             )}
 
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-4">
-                <Link
-                    href="/admin/posts"
-                    className="px-6 py-3 text-gray-700 font-medium hover:text-gray-900 transition-colors"
-                >
-                    Batal
-                </Link>
+            {/* Submit */}
+            <div className="flex items-center gap-3 pt-4">
                 <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    disabled={isLoading}
+                    className="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
-                    {isSubmitting ? (
-                        <>
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>Menyimpan...</span>
-                        </>
-                    ) : (
-                        <span>{post ? 'Simpan Perubahan' : 'Simpan Berita'}</span>
-                    )}
+                    {isLoading ? 'Menyimpan...' : existingPost ? 'Simpan Perubahan' : 'Buat Berita'}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="px-6 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                >
+                    Batal
                 </button>
             </div>
         </form>

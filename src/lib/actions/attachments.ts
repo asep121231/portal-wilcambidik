@@ -3,9 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function uploadAttachment(postId: string, formData: FormData) {
+export async function uploadAttachment(postId: string, file: File) {
     const supabase = await createClient()
-    const file = formData.get('file') as File
 
     if (!file) {
         return { error: 'File tidak ditemukan' }
@@ -56,22 +55,31 @@ export async function uploadAttachment(postId: string, formData: FormData) {
     return { data }
 }
 
-export async function deleteAttachment(id: string, fileUrl: string, postId: string) {
+export async function deleteAttachment(id: string) {
     const supabase = await createClient()
 
-    // Extract file path from URL
-    const urlParts = fileUrl.split('/attachments/')
-    if (urlParts.length > 1) {
-        const filePath = urlParts[1]
+    // Get attachment first to find file path and post_id
+    const { data: attachment } = await supabase
+        .from('attachments')
+        .select('file_url, post_id')
+        .eq('id', id)
+        .single()
 
-        // Delete from storage
-        const { error: storageError } = await supabase
-            .storage
-            .from('attachments')
-            .remove([filePath])
+    if (attachment?.file_url) {
+        // Extract file path from URL
+        const urlParts = attachment.file_url.split('/attachments/')
+        if (urlParts.length > 1) {
+            const filePath = urlParts[1]
 
-        if (storageError) {
-            console.error('Error deleting from storage:', storageError)
+            // Delete from storage
+            const { error: storageError } = await supabase
+                .storage
+                .from('attachments')
+                .remove([filePath])
+
+            if (storageError) {
+                console.error('Error deleting from storage:', storageError)
+            }
         }
     }
 
@@ -86,8 +94,10 @@ export async function deleteAttachment(id: string, fileUrl: string, postId: stri
         return { error: error.message }
     }
 
-    revalidatePath(`/berita/${postId}`)
-    revalidatePath(`/admin/posts/${postId}/edit`)
+    if (attachment?.post_id) {
+        revalidatePath(`/berita/${attachment.post_id}`)
+        revalidatePath(`/admin/posts/${attachment.post_id}/edit`)
+    }
 
     return { success: true }
 }

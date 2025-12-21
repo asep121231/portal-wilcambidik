@@ -5,14 +5,17 @@ export default async function AdminCategoriesPage() {
     const categories = await getCategories()
 
     return (
-        <div className="max-w-2xl mx-auto space-y-6">
-            {/* Page header */}
+        <div className="space-y-6">
+            {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Kelola Kategori</h1>
-                <p className="text-gray-500 mt-1">Atur kategori untuk berita dan informasi</p>
+                <h1 className="text-xl font-bold text-gray-900">Kelola Kategori</h1>
+                <p className="text-sm text-gray-500">{categories.length} kategori tersedia</p>
             </div>
 
-            <CategoriesManager initialCategories={categories} />
+            {/* Manager */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <CategoriesManager initialCategories={categories} />
+            </div>
         </div>
     )
 }
