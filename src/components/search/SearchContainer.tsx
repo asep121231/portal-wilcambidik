@@ -6,6 +6,18 @@ import { searchPosts } from '@/lib/actions/search'
 import { getCategories } from '@/lib/actions/categories'
 import PostCard from '@/components/ui/PostCard'
 import { PostCardSkeleton } from '@/components/ui/Loading'
+import TypingText from '@/components/ui/TypingText'
+import AnimatedCounter from '@/components/ui/AnimatedCounter'
+
+// Category emoji mapping
+const categoryEmojis: Record<string, string> = {
+    'Surat Edaran': '📋',
+    'Pengumuman': '📢',
+    'Undangan': '💌',
+    'Laporan': '📊',
+    'Kegiatan': '🎯',
+    'Umum': '📌',
+}
 
 interface Post {
     id: string
@@ -122,12 +134,37 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center relative z-10">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                         Portal Informasi{' '}
-                        <span className="gradient-text">Kedinasan</span>
+                        <TypingText
+                            texts={['Kedinasan', 'Pendidikan', 'Bruno']}
+                            className="gradient-text"
+                        />
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
                         Pusat informasi resmi dari Wilayah Cabang Bidang Pendidikan Bruno.
                         Temukan pengumuman, berita, dan dokumen penting.
                     </p>
+
+                    {/* Stats Counter */}
+                    <div className="flex justify-center gap-8 md:gap-16 mb-10">
+                        <div className="text-center">
+                            <div className="text-3xl md:text-4xl font-bold text-purple-600">
+                                <AnimatedCounter end={total} suffix="+" />
+                            </div>
+                            <div className="text-sm text-gray-500">Informasi</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl md:text-4xl font-bold text-pink-500">
+                                <AnimatedCounter end={categories.length} />
+                            </div>
+                            <div className="text-sm text-gray-500">Kategori</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl md:text-4xl font-bold text-purple-600">
+                                <AnimatedCounter end={24} suffix="/7" />
+                            </div>
+                            <div className="text-sm text-gray-500">Akses</div>
+                        </div>
+                    </div>
 
                     {/* Search Box */}
                     <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
@@ -176,12 +213,13 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <button
                                 key={cat.id}
                                 onClick={() => handleCategoryChange(cat.id)}
-                                className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${currentCategory === cat.id
+                                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all ${currentCategory === cat.id
                                     ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
                                     : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                                     }`}
                             >
-                                {cat.name}
+                                <span>{categoryEmojis[cat.name] || '📁'}</span>
+                                <span>{cat.name}</span>
                             </button>
                         ))}
                     </div>
