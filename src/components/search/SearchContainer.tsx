@@ -8,6 +8,7 @@ import PostCard from '@/components/ui/PostCard'
 import { PostCardSkeleton } from '@/components/ui/Loading'
 import TypingText from '@/components/ui/TypingText'
 import AnimatedCounter from '@/components/ui/AnimatedCounter'
+import FadeIn from '@/components/ui/FadeIn'
 
 // Category emoji mapping
 const categoryEmojis: Record<string, string> = {
@@ -243,16 +244,17 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {posts.map((post) => (
-                                <PostCard
-                                    key={post.id}
-                                    id={post.id}
-                                    title={post.title}
-                                    content={post.content}
-                                    categoryName={post.category_name}
-                                    urgency={post.urgency}
-                                    createdAt={post.created_at}
-                                />
+                            {posts.map((post, index) => (
+                                <FadeIn key={post.id} delay={index * 100}>
+                                    <PostCard
+                                        id={post.id}
+                                        title={post.title}
+                                        content={post.content}
+                                        categoryName={post.category_name}
+                                        urgency={post.urgency}
+                                        createdAt={post.created_at}
+                                    />
+                                </FadeIn>
                             ))}
                         </div>
                     )}
