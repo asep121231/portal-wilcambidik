@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
+/* Tailwind v4: Define source files to scan */
+@source "../components/**/*.tsx";
+@source "../app/**/*.tsx";
+@source "./globals.css";
+
 /* ===========================================
    Government Portal Design System
    Clean, Professional, Gen-Z Friendly
