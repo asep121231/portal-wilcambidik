@@ -41,16 +41,16 @@ export default function SearchFilters({
     const hasActiveFilters = selectedCategory || startDate || endDate || urgency
 
     return (
-        <div className="bg-white border-b border-gray-100 shadow-sm sticky top-14 lg:top-16 z-40">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Main Filter Bar - Scrollable on Mobile */}
+        <div className="bg-[#F8FAFC] border-b border-[#E2E8F0] sticky top-16 z-40">
+            <div className="container-gov">
+                {/* Main Filter Bar */}
                 <div className="flex items-center gap-2 py-3 overflow-x-auto hide-scrollbar">
                     {/* Category Pills */}
                     <button
                         onClick={() => onCategoryChange('')}
-                        className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all touch-target ${!selectedCategory
-                            ? 'bg-[#1E40AF] text-white shadow-sm'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors touch-target ${!selectedCategory
+                            ? 'bg-[#2563EB] text-white'
+                            : 'bg-white text-[#475569] border border-[#E2E8F0] hover:border-[#2563EB]'
                             }`}
                     >
                         Semua
@@ -59,21 +59,21 @@ export default function SearchFilters({
                         <button
                             key={category.id}
                             onClick={() => onCategoryChange(category.id)}
-                            className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all touch-target ${selectedCategory === category.id
-                                ? 'bg-[#1E40AF] text-white shadow-sm'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors touch-target ${selectedCategory === category.id
+                                ? 'bg-[#2563EB] text-white'
+                                : 'bg-white text-[#475569] border border-[#E2E8F0] hover:border-[#2563EB]'
                                 }`}
                         >
                             {category.name}
                         </button>
                     ))}
 
-                    {/* Expand Filters Button */}
+                    {/* Filter Toggle */}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className={`flex-shrink-0 ml-auto flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all touch-target ${isExpanded || hasActiveFilters
-                            ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        className={`flex-shrink-0 ml-auto flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors touch-target ${isExpanded || hasActiveFilters
+                            ? 'bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB]'
+                            : 'bg-white text-[#475569] border border-[#E2E8F0] hover:border-[#2563EB]'
                             }`}
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,59 +86,56 @@ export default function SearchFilters({
                     </button>
                 </div>
 
-                {/* Expanded Filters Panel */}
+                {/* Expanded Filters */}
                 {isExpanded && (
-                    <div className="pb-4 pt-2 border-t border-gray-100 fade-in">
+                    <div className="pb-4 pt-2 border-t border-[#E2E8F0] fade-in">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                            {/* Date Range */}
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-[#475569] mb-1.5">
                                     Dari Tanggal
                                 </label>
                                 <input
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => onStartDateChange(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] bg-gray-50"
+                                    className="input"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-[#475569] mb-1.5">
                                     Sampai Tanggal
                                 </label>
                                 <input
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => onEndDateChange(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] bg-gray-50"
+                                    className="input"
                                 />
                             </div>
-
-                            {/* Urgency */}
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-[#475569] mb-1.5">
                                     Prioritas
                                 </label>
                                 <select
                                     value={urgency}
                                     onChange={(e) => onUrgencyChange(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] bg-gray-50"
+                                    className="input"
                                 >
                                     <option value="">Semua</option>
-                                    <option value="urgent">🔴 Penting</option>
-                                    <option value="normal">🟢 Normal</option>
+                                    <option value="urgent">Mendesak</option>
+                                    <option value="deadline">Batas Waktu</option>
+                                    <option value="general">Umum</option>
+                                    <option value="archive">Arsip</option>
                                 </select>
                             </div>
-
-                            {/* Sort Order */}
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-[#475569] mb-1.5">
                                     Urutkan
                                 </label>
                                 <select
                                     value={sortOrder}
                                     onChange={(e) => onSortOrderChange(e.target.value as 'asc' | 'desc')}
-                                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] bg-gray-50"
+                                    className="input"
                                 >
                                     <option value="desc">Terbaru</option>
                                     <option value="asc">Terlama</option>
@@ -146,12 +143,11 @@ export default function SearchFilters({
                             </div>
                         </div>
 
-                        {/* Reset Button */}
                         {hasActiveFilters && (
                             <div className="mt-3 flex justify-end">
                                 <button
                                     onClick={onReset}
-                                    className="text-sm text-gray-500 hover:text-[#1E40AF] flex items-center gap-1.5 transition-colors"
+                                    className="text-sm text-[#475569] hover:text-[#2563EB] flex items-center gap-1.5 transition-colors"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

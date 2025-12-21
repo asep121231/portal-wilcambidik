@@ -34,7 +34,7 @@ export interface Database {
                     content: string
                     category_id: string | null
                     status: 'draft' | 'published'
-                    urgency: 'urgent' | 'normal'
+                    urgency: 'urgent' | 'deadline' | 'general' | 'archive'
                     created_at: string
                     updated_at: string
                 }

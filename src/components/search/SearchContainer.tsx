@@ -44,10 +44,9 @@ export default function SearchContainer({ categories, initialPosts, initialHasMo
     const [isLoadingMore, setIsLoadingMore] = useState(false)
 
     // Separate urgent and normal posts
-    const urgentPosts = posts.filter(p => p.urgency === 'urgent')
-    const normalPosts = posts.filter(p => p.urgency !== 'urgent')
+    const urgentPosts = posts.filter(p => p.urgency === 'urgent' || p.urgency === 'deadline')
+    const normalPosts = posts.filter(p => p.urgency !== 'urgent' && p.urgency !== 'deadline')
 
-    // Update URL and search (resets pagination)
     const updateSearch = useCallback(async () => {
         setIsSearching(true)
         setPage(1)
@@ -85,7 +84,6 @@ export default function SearchContainer({ categories, initialPosts, initialHasMo
         }
     }, [keyword, categoryId, startDate, endDate, urgency, sortOrder, router])
 
-    // Load more posts
     const loadMore = useCallback(async () => {
         if (isLoadingMore || !hasMore) return
 
@@ -171,7 +169,7 @@ export default function SearchContainer({ categories, initialPosts, initialHasMo
         content: post.content,
         category_id: post.category_id,
         status: post.status as 'draft' | 'published',
-        urgency: (post.urgency || 'normal') as 'urgent' | 'normal',
+        urgency: (post.urgency || 'general') as 'urgent' | 'deadline' | 'general' | 'archive',
         created_at: post.created_at,
         updated_at: post.updated_at,
         categories: post.category_name ? {
@@ -183,17 +181,20 @@ export default function SearchContainer({ categories, initialPosts, initialHasMo
 
     return (
         <>
-            {/* Hero Section */}
-            <section className="hero-gradient text-white py-12 md:py-16 relative overflow-hidden">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="flex flex-col items-center justify-center text-center gap-4">
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mx-auto">
+            {/* Hero Section - Government Style */}
+            <section className="gov-hero py-12 md:py-16">
+                <div className="container-gov">
+                    <div className="max-w-3xl mx-auto md:mx-0">
+                        {/* Title */}
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-[#0F172A] mb-2 text-center md:text-left">
                             Portal Informasi Kedinasan
                         </h1>
-                        <p className="text-sm md:text-base text-blue-100 mx-auto">
+                        <p className="text-[#475569] mb-6 text-center md:text-left">
                             Wilayah Cabang Dinas Pendidikan Bruno
                         </p>
-                        <div className="w-full max-w-xl mx-auto mt-2">
+
+                        {/* Search Box */}
+                        <div className="max-w-2xl mx-auto md:mx-0">
                             <SearchBar initialValue={keyword} onSearch={handleKeywordSearch} />
                         </div>
                     </div>
@@ -217,129 +218,94 @@ export default function SearchContainer({ categories, initialPosts, initialHasMo
             />
 
             {/* Main Content */}
-            <section className="py-6 md:py-8 bg-gray-50 min-h-[60vh]" id="info">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="gov-section bg-white" id="info">
+                <div className="container-gov">
 
                     {(isSearching || isPending) ? (
-                        <div className="space-y-4">
+                        <div className="space-y-4 max-w-4xl">
                             {Array.from({ length: 4 }).map((_, i) => (
                                 <PostCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : posts.length === 0 ? (
-                        <div className="text-center py-12 bg-white rounded-2xl shadow-sm">
-                            <div className="w-14 h-14 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
-                                <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="text-center py-16 max-w-md mx-auto">
+                            <div className="w-16 h-16 bg-[#F8FAFC] rounded-full mx-auto mb-4 flex items-center justify-center">
+                                <svg className="w-8 h-8 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-base font-semibold text-gray-900 mb-1">Informasi tidak ditemukan</h3>
-                            <p className="text-sm text-gray-500 mb-4">Coba ubah kata kunci atau filter pencarian.</p>
-                            <button onClick={handleReset} className="btn btn-secondary text-sm">
+                            <h3 className="text-lg font-semibold text-[#0F172A] mb-2">Informasi tidak ditemukan</h3>
+                            <p className="text-[#475569] text-sm mb-4">Coba ubah kata kunci atau filter pencarian.</p>
+                            <button onClick={handleReset} className="btn btn-outline">
                                 Reset pencarian
                             </button>
                         </div>
                     ) : (
                         <>
-                            {/* Header */}
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-gray-900">
+                            {/* Section Header */}
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="section-title">
                                     {keyword ? `Hasil: "${keyword}"` : selectedCategoryName || 'Informasi Terbaru'}
                                 </h2>
-                                <span className="text-xs text-gray-500 bg-white px-2.5 py-1 rounded-full shadow-sm">
-                                    {posts.length} info
+                                <span className="text-sm text-[#475569]">
+                                    {posts.length} informasi
                                 </span>
                             </div>
 
-                            {/* Urgent Posts Banner (Mobile) */}
+                            {/* Urgent Banner */}
                             {!urgency && urgentPosts.length > 0 && (
-                                <div className="lg:hidden bg-red-50 rounded-xl p-4 border border-red-100 mb-4">
+                                <div className="mb-6 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-lg">
                                     <div className="flex items-center gap-2 mb-3">
-                                        <div className="w-7 h-7 bg-red-100 rounded-full flex items-center justify-center">
-                                            <svg className="w-3.5 h-3.5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="font-bold text-red-900 text-sm">Informasi Penting</h3>
+                                        <svg className="w-5 h-5 text-[#DC2626]" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                        <span className="font-semibold text-[#DC2626] text-sm">Informasi Penting</span>
                                     </div>
-                                    <div className="space-y-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                                         {urgentPosts.slice(0, 3).map((post) => (
-                                            <a key={post.id} href={`/berita/${post.id}`} className="block p-3 bg-white rounded-lg">
-                                                <h4 className="text-sm font-medium text-gray-900 line-clamp-1">{post.title}</h4>
+                                            <a
+                                                key={post.id}
+                                                href={`/berita/${post.id}`}
+                                                className="block p-3 bg-white rounded-md hover:bg-[#FEF2F2] transition-colors border border-[#FECACA]"
+                                            >
+                                                <span className="text-sm font-medium text-[#0F172A] line-clamp-1">{post.title}</span>
                                             </a>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
-                            {/* Desktop: 2 or 3 Column Layout */}
-                            <div className={`grid grid-cols-1 gap-6 ${!urgency && urgentPosts.length > 0 ? 'lg:grid-cols-3' : ''}`}>
-                                {/* Main Column - Posts */}
-                                <div className={`space-y-3 ${!urgency && urgentPosts.length > 0 ? 'lg:col-span-2' : ''}`}>
-                                    {(urgency === 'urgent' ? urgentPosts : urgency === 'normal' ? normalPosts : posts).map((post) => (
-                                        <PostCardCompact key={post.id} post={mapPost(post)} />
-                                    ))}
-
-                                    {/* Load More Button */}
-                                    {hasMore && (
-                                        <div className="pt-4 text-center">
-                                            <button
-                                                onClick={loadMore}
-                                                disabled={isLoadingMore}
-                                                className="btn btn-secondary w-full sm:w-auto min-w-[200px]"
-                                            >
-                                                {isLoadingMore ? (
-                                                    <>
-                                                        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                                                        Memuat...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                                        </svg>
-                                                        Muat lebih banyak
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Desktop Sidebar - Urgent Posts */}
-                                {!urgency && urgentPosts.length > 0 && (
-                                    <div className="hidden lg:block lg:col-span-1">
-                                        <div className="bg-red-50 rounded-2xl p-4 border border-red-100 sticky top-32">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                                    <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                    </svg>
-                                                </div>
-                                                <h3 className="font-bold text-red-900 text-sm">Informasi Penting</h3>
-                                            </div>
-                                            <div className="space-y-2">
-                                                {urgentPosts.slice(0, 5).map((post) => (
-                                                    <a
-                                                        key={post.id}
-                                                        href={`/berita/${post.id}`}
-                                                        className="block p-3 bg-white rounded-xl hover:shadow-sm transition-shadow"
-                                                    >
-                                                        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
-                                                            {post.title}
-                                                        </h4>
-                                                        <time className="text-xs text-gray-500">
-                                                            {new Date(post.created_at).toLocaleDateString('id-ID', {
-                                                                day: 'numeric', month: 'short'
-                                                            })}
-                                                        </time>
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                            {/* Posts List */}
+                            <div className="space-y-3 max-w-4xl">
+                                {(urgency === 'urgent' || urgency === 'deadline' ? urgentPosts : urgency === 'general' || urgency === 'archive' ? normalPosts : posts).map((post) => (
+                                    <PostCardCompact key={post.id} post={mapPost(post)} />
+                                ))}
                             </div>
+
+                            {/* Load More Button */}
+                            {hasMore && (
+                                <div className="pt-8 text-center">
+                                    <button
+                                        onClick={loadMore}
+                                        disabled={isLoadingMore}
+                                        className="btn btn-secondary min-w-[200px]"
+                                    >
+                                        {isLoadingMore ? (
+                                            <>
+                                                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                                Memuat...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                                Muat lebih banyak
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

@@ -1,76 +1,52 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface SearchBarProps {
     initialValue?: string
     onSearch: (keyword: string) => void
-    placeholder?: string
 }
 
-export default function SearchBar({
-    initialValue = '',
-    onSearch,
-    placeholder = 'Cari informasi kedinasan...'
-}: SearchBarProps) {
+export default function SearchBar({ initialValue = '', onSearch }: SearchBarProps) {
     const [value, setValue] = useState(initialValue)
-    const [debouncedValue, setDebouncedValue] = useState(initialValue)
 
-    // Debounce effect
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    // Debounce search
     useEffect(() => {
         const timer = setTimeout(() => {
-            setDebouncedValue(value)
+            if (value !== initialValue) {
+                onSearch(value)
+            }
         }, 300)
-
         return () => clearTimeout(timer)
-    }, [value])
-
-    // Trigger search when debounced value changes
-    useEffect(() => {
-        onSearch(debouncedValue)
-    }, [debouncedValue, onSearch])
+    }, [value, initialValue, onSearch])
 
     const handleClear = useCallback(() => {
         setValue('')
-        setDebouncedValue('')
         onSearch('')
     }, [onSearch])
 
     return (
-        <div className="w-full max-w-xl mx-auto">
-            <div className="relative">
-                {/* Search Icon */}
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg
-                        className="w-5 h-5 text-white/60"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                    </svg>
-                </div>
-
-                {/* Input */}
+        <div className="space-y-2">
+            <div className="search-box">
+                <svg className="w-5 h-5 text-[#94A3B8] ml-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
                 <input
                     type="text"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
-                    placeholder={placeholder}
-                    className="w-full pl-12 pr-12 py-3.5 text-base bg-white/15 backdrop-blur-sm border border-white/25 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
-                    aria-label="Cari informasi"
+                    placeholder="Cari informasi, surat edaran, atau file..."
+                    className="flex-1 touch-target"
                 />
-
-                {/* Clear Button */}
                 {value && (
                     <button
+                        type="button"
                         onClick={handleClear}
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/60 hover:text-white transition-colors"
+                        className="p-2 mr-1 text-[#94A3B8] hover:text-[#475569] transition-colors"
                         aria-label="Hapus pencarian"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,10 +54,11 @@ export default function SearchBar({
                         </svg>
                     </button>
                 )}
+                <button className="mr-1 hidden sm:flex">
+                    Cari
+                </button>
             </div>
-
-            {/* Search hint */}
-            <p className="mt-3 text-sm text-white/50 text-center">
+            <p className="text-xs text-[#94A3B8] pl-1">
                 Cari berdasarkan judul, isi, atau nama file
             </p>
         </div>
