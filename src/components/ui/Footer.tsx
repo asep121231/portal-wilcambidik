@@ -2,14 +2,14 @@ import Link from 'next/link'
 
 export default function Footer() {
     return (
-        <footer className="bg-white border-t border-gray-100">
+        <footer className="bg-white border-t border-gray-200">
             {/* Main Footer */}
-            <div className="container-main py-16">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 md:py-16">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
                     {/* Brand */}
                     <div className="md:col-span-2">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
+                            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
                                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
@@ -19,7 +19,7 @@ export default function Footer() {
                                 <div className="text-sm text-gray-500">Portal Informasi Kedinasan</div>
                             </div>
                         </div>
-                        <p className="text-gray-600 max-w-sm">
+                        <p className="text-gray-600 max-w-sm leading-relaxed">
                             Pusat informasi resmi dari Wilayah Cabang Bidang Diklatpim Bruno untuk
                             masyarakat dan aparatur sipil negara.
                         </p>
@@ -71,7 +71,7 @@ export default function Footer() {
 
             {/* Bottom Bar */}
             <div className="border-t border-gray-100">
-                <div className="container-main py-6">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
                         <p>© 2024 Wilcambidik Bruno. Hak Cipta Dilindungi.</p>
                         <div className="flex items-center gap-4">

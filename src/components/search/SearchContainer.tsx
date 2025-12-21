@@ -106,22 +106,22 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
     const totalPages = Math.ceil(total / POSTS_PER_PAGE)
 
     return (
-        <div>
+        <div className="bg-gray-50 min-h-screen">
             {/* Hero Section */}
-            <section className="py-20 md:py-28 bg-white">
-                <div className="container-main text-center">
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <section className="py-16 md:py-24 bg-white">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                         Portal Informasi{' '}
                         <span className="gradient-text">Kedinasan</span>
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
                         Pusat informasi resmi dari Wilayah Cabang Bidang Diklatpim Bruno.
                         Temukan pengumuman, berita, dan dokumen penting.
                     </p>
 
                     {/* Search Box */}
                     <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
-                        <div className="search-box">
+                        <div className="flex items-center bg-white border-2 border-gray-200 rounded-full overflow-hidden focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-100 transition-all">
                             <svg className="ml-5 w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
@@ -130,24 +130,35 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 placeholder="Cari informasi..."
+                                className="flex-1 px-4 py-4 text-base border-none focus:outline-none bg-transparent"
                             />
-                            <button type="submit">Cari</button>
+                            <button
+                                type="submit"
+                                className="m-1.5 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-medium rounded-full hover:opacity-90 transition-opacity"
+                            >
+                                Cari
+                            </button>
                         </div>
                     </form>
                 </div>
             </section>
 
             {/* Content Section */}
-            <section id="info" className="py-16 md:py-24">
-                <div className="container-main">
+            <section id="info" className="py-12 md:py-16">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8">
                     {/* Section Title */}
-                    <h2 className="section-title">Informasi Terbaru</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-10">
+                        Informasi Terbaru
+                    </h2>
 
                     {/* Category Filters */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-12">
+                    <div className="flex flex-wrap justify-center gap-2 mb-10">
                         <button
                             onClick={() => handleCategoryChange('')}
-                            className={`btn ${!currentCategory ? 'btn-primary' : 'btn-secondary'}`}
+                            className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${!currentCategory
+                                    ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
+                                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                }`}
                         >
                             Semua
                         </button>
@@ -155,7 +166,10 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <button
                                 key={cat.id}
                                 onClick={() => handleCategoryChange(cat.id)}
-                                className={`btn ${currentCategory === cat.id ? 'btn-primary' : 'btn-secondary'}`}
+                                className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${currentCategory === cat.id
+                                        ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
+                                        : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                    }`}
                             >
                                 {cat.name}
                             </button>
@@ -164,7 +178,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
 
                     {/* Posts Grid */}
                     {isPending ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
                                 <PostCardSkeleton key={i} />
                             ))}
@@ -180,7 +194,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <p className="text-gray-500">Informasi yang Anda cari tidak ditemukan</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {posts.map((post) => (
                                 <PostCard
                                     key={post.id}
@@ -201,7 +215,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <button
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="btn btn-secondary disabled:opacity-40"
+                                className="px-5 py-2.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-full hover:bg-gray-50 disabled:opacity-40 transition-all"
                             >
                                 Sebelumnya
                             </button>
@@ -212,8 +226,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                         key={page}
                                         onClick={() => handlePageChange(page)}
                                         className={`w-10 h-10 rounded-full font-medium transition-colors ${page === currentPage
-                                            ? 'bg-purple-600 text-white'
-                                            : 'text-gray-600 hover:bg-gray-100'
+                                                ? 'bg-purple-600 text-white'
+                                                : 'text-gray-600 hover:bg-gray-100'
                                             }`}
                                     >
                                         {page}
@@ -224,7 +238,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <button
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="btn btn-secondary disabled:opacity-40"
+                                className="px-5 py-2.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-full hover:bg-gray-50 disabled:opacity-40 transition-all"
                             >
                                 Selanjutnya
                             </button>

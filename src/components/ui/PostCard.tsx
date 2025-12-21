@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import StatusBadge from './StatusBadge'
 
 interface PostCardProps {
     id: string
@@ -28,18 +27,27 @@ export default function PostCard({
         ? content.substring(0, 150) + '...'
         : content
 
-    const showStatus = urgency === 'urgent' || urgency === 'deadline'
+    const urgencyBadge = {
+        urgent: { label: 'MENDESAK', bg: 'bg-red-100', text: 'text-red-700' },
+        deadline: { label: 'BATAS WAKTU', bg: 'bg-amber-100', text: 'text-amber-700' },
+        general: null,
+        archive: null,
+    }[urgency]
 
     return (
         <Link href={`/berita/${id}`} className="block group">
-            <article className="card p-6">
+            <article className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 {/* Top: Badges */}
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
                     {categoryName && (
-                        <span className="badge badge-primary">{categoryName}</span>
+                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 uppercase tracking-wide">
+                            {categoryName}
+                        </span>
                     )}
-                    {showStatus && (
-                        <StatusBadge status={urgency as 'urgent' | 'deadline' | 'general' | 'archive'} />
+                    {urgencyBadge && (
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wide ${urgencyBadge.bg} ${urgencyBadge.text}`}>
+                            {urgencyBadge.label}
+                        </span>
                     )}
                 </div>
 
