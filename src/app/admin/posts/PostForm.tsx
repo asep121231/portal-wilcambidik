@@ -233,14 +233,14 @@ export default function PostForm({ categories, post }: PostFormProps) {
             <div className="flex items-center justify-end gap-4">
                 <Link
                     href="/admin/posts"
-                    className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                    className="px-6 py-3 text-gray-700 font-medium hover:text-gray-900 transition-colors"
                 >
                     Batal
                 </Link>
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-3 bg-[#1E40AF] hover:bg-[#1D4ED8] text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                     {isSubmitting ? (
                         <>
@@ -248,12 +248,7 @@ export default function PostForm({ categories, post }: PostFormProps) {
                             <span>Menyimpan...</span>
                         </>
                     ) : (
-                        <>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>{post ? 'Simpan Perubahan' : 'Simpan Berita'}</span>
-                        </>
+                        <span>{post ? 'Simpan Perubahan' : 'Simpan Berita'}</span>
                     )}
                 </button>
             </div>

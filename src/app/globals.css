@@ -123,6 +123,12 @@ p {
   border-bottom: 1px solid var(--border);
 }
 
+/* Hero Gradient - Blue Theme */
+.hero-gradient {
+  background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%);
+  color: white;
+}
+
 /* ===========================================
    Content Sections
    =========================================== */
