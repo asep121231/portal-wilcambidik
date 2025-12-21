@@ -44,12 +44,12 @@ export default function Header() {
         <>
             <header
                 className={`sticky top-0 z-50 transition-all duration-200 ${isScrolled
-                        ? 'bg-white/95 backdrop-blur-sm shadow-md'
-                        : 'bg-white'
+                    ? 'bg-white/95 backdrop-blur-sm shadow-md'
+                    : 'bg-white border-b border-gray-100'
                     }`}
             >
                 <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
+                    <div className="flex items-center justify-between h-14 lg:h-16">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group">
                             <div className="w-10 h-10 bg-gradient-to-br from-[#1E40AF] to-[#2563EB] rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
@@ -76,8 +76,8 @@ export default function Header() {
                                         key={item.name}
                                         href={item.href}
                                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
-                                                ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
-                                                : 'text-gray-600 hover:text-[#1E40AF] hover:bg-gray-50'
+                                            ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
+                                            : 'text-gray-600 hover:text-[#1E40AF] hover:bg-gray-50'
                                             }`}
                                     >
                                         {item.name}
@@ -146,8 +146,8 @@ export default function Header() {
                                     href={item.href}
                                     onClick={() => setIsOpen(false)}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors ${isActive
-                                            ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
-                                            : 'text-gray-700 hover:bg-gray-50'
+                                        ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
+                                        : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
                                     {item.name}

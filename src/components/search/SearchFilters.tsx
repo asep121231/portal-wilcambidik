@@ -41,7 +41,7 @@ export default function SearchFilters({
     const hasActiveFilters = selectedCategory || startDate || endDate || urgency
 
     return (
-        <div className="bg-white border-b border-gray-100 shadow-sm sticky top-16 z-40">
+        <div className="bg-white border-b border-gray-100 shadow-sm sticky top-14 lg:top-16 z-40">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Main Filter Bar - Scrollable on Mobile */}
                 <div className="flex items-center gap-2 py-3 overflow-x-auto hide-scrollbar">
@@ -49,8 +49,8 @@ export default function SearchFilters({
                     <button
                         onClick={() => onCategoryChange('')}
                         className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all touch-target ${!selectedCategory
-                                ? 'bg-[#1E40AF] text-white shadow-sm'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-[#1E40AF] text-white shadow-sm'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                     >
                         Semua
@@ -60,8 +60,8 @@ export default function SearchFilters({
                             key={category.id}
                             onClick={() => onCategoryChange(category.id)}
                             className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all touch-target ${selectedCategory === category.id
-                                    ? 'bg-[#1E40AF] text-white shadow-sm'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                ? 'bg-[#1E40AF] text-white shadow-sm'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
                             {category.name}
@@ -72,8 +72,8 @@ export default function SearchFilters({
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
                         className={`flex-shrink-0 ml-auto flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all touch-target ${isExpanded || hasActiveFilters
-                                ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-[#1E40AF]/10 text-[#1E40AF]'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
