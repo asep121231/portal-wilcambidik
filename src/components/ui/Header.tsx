@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import NotificationButton from './NotificationButton'
 
 const navigation = [
     { name: 'Beranda', href: '/' },
@@ -28,8 +29,8 @@ export default function Header() {
     return (
         <>
             <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'glass-effect shadow-lg'
-                    : 'bg-white'
+                ? 'glass-effect shadow-lg'
+                : 'bg-white'
                 }`}>
                 <div className="max-w-7xl mx-auto px-4 lg:px-8">
                     <div className="flex items-center justify-between h-20">
@@ -55,17 +56,18 @@ export default function Header() {
                                         key={item.name}
                                         href={item.href}
                                         className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${isActive
-                                                ? 'bg-purple-100 text-purple-700'
-                                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                            ? 'bg-purple-100 text-purple-700'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                             }`}
                                     >
                                         {item.name}
                                     </Link>
                                 )
                             })}
+                            <NotificationButton />
                             <Link
                                 href="/admin"
-                                className="ml-3 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-sm font-medium rounded-full hover:opacity-90 transition-all shadow-lg"
+                                className="ml-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-sm font-medium rounded-full hover:opacity-90 transition-all shadow-lg"
                             >
                                 Admin Panel
                             </Link>
