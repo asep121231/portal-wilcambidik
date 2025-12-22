@@ -73,7 +73,7 @@ export default function StrukturOrganisasiPage() {
                     <div className="text-center max-w-3xl mx-auto">
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-purple-200 dark:border-purple-700 mb-6">
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Wilayah Cabang Bidang Pendidikan</span>
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Wilcambidik Bruno</span>
                         </div>
 
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
