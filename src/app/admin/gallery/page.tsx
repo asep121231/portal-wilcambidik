@@ -84,14 +84,34 @@ export default function AdminGalleryPage() {
 
     async function handlePhotoUpload(activityId: string, files: FileList) {
         setUploadingPhotos(true)
+        let successCount = 0
 
         for (const file of Array.from(files)) {
-            await uploadActivityPhoto(activityId, file)
+            const formData = new FormData()
+            formData.append('file', file)
+            formData.append('activityId', activityId)
+
+            try {
+                const response = await fetch('/api/upload-gallery', {
+                    method: 'POST',
+                    body: formData,
+                })
+                const result = await response.json()
+                if (result.success) {
+                    successCount++
+                }
+            } catch (error) {
+                console.error('Upload error:', error)
+            }
         }
 
         setUploadingPhotos(false)
         loadData()
-        setNotification({ type: 'success', message: `${files.length} foto berhasil diupload!` })
+        if (successCount > 0) {
+            setNotification({ type: 'success', message: `${successCount} foto berhasil diupload!` })
+        } else {
+            setNotification({ type: 'error', message: 'Gagal mengupload foto' })
+        }
         setTimeout(() => setNotification(null), 3000)
     }
 
@@ -291,8 +311,8 @@ export default function AdminGalleryPage() {
                                         <div className="flex items-center gap-2">
                                             <h3 className="font-semibold text-gray-900">{activity.title}</h3>
                                             <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${activity.status === 'published'
-                                                    ? 'bg-green-100 text-green-700'
-                                                    : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-green-100 text-green-700'
+                                                : 'bg-gray-100 text-gray-600'
                                                 }`}>
                                                 {activity.status === 'published' ? 'Publik' : 'Draft'}
                                             </span>
