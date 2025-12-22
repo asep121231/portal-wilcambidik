@@ -32,7 +32,7 @@ export default function Footer() {
     }
 
     return (
-        <footer className="bg-white border-t border-gray-200">
+        <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
             {/* Newsletter Section */}
             <div className="bg-gradient-to-r from-purple-600 to-pink-500">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
@@ -87,11 +87,11 @@ export default function Footer() {
                                 </svg>
                             </div>
                             <div>
-                                <div className="font-bold text-lg text-gray-900">Wilcambidik Bruno</div>
-                                <div className="text-sm text-gray-500">Portal Informasi Kedinasan</div>
+                                <div className="font-bold text-lg text-gray-900 dark:text-white">Wilcambidik Bruno</div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">Portal Informasi Kedinasan</div>
                             </div>
                         </div>
-                        <p className="text-gray-600 max-w-sm leading-relaxed">
+                        <p className="text-gray-600 dark:text-gray-400 max-w-sm leading-relaxed">
                             Pusat informasi resmi dari Wilayah Cabang Bidang Pendidikan Bruno untuk
                             masyarakat dan aparatur sipil negara.
                         </p>
@@ -99,20 +99,20 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Navigasi</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Navigasi</h3>
                         <ul className="space-y-3">
                             <li>
-                                <Link href="/" className="text-gray-600 hover:text-purple-600 transition-colors">
+                                <Link href="/" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                                     Beranda
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/#info" className="text-gray-600 hover:text-purple-600 transition-colors">
+                                <Link href="/#info" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                                     Informasi
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/admin" className="text-gray-600 hover:text-purple-600 transition-colors">
+                                <Link href="/admin" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                                     Admin Panel
                                 </Link>
                             </li>
@@ -121,8 +121,8 @@ export default function Footer() {
 
                     {/* Contact */}
                     <div>
-                        <h3 className="font-semibold text-gray-900 mb-4">Kontak</h3>
-                        <ul className="space-y-3 text-gray-600">
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Kontak</h3>
+                        <ul className="space-y-3 text-gray-600 dark:text-gray-400">
                             <li className="flex items-center gap-2">
                                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -142,13 +142,13 @@ export default function Footer() {
             </div>
 
             {/* Bottom Bar */}
-            <div className="border-t border-gray-100">
+            <div className="border-t border-gray-100 dark:border-gray-800">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-gray-400">
                         <p>© 2024 Wilcambidik Bruno. Hak Cipta Dilindungi.</p>
                         <div className="flex items-center gap-4">
-                            <a href="#" className="hover:text-purple-600 transition-colors">Kebijakan Privasi</a>
-                            <a href="#" className="hover:text-purple-600 transition-colors">Syarat & Ketentuan</a>
+                            <a href="#" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Kebijakan Privasi</a>
+                            <a href="#" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Syarat & Ketentuan</a>
                         </div>
                     </div>
                 </div>

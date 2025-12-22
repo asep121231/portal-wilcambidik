@@ -119,10 +119,10 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
     const totalPages = Math.ceil(total / POSTS_PER_PAGE)
 
     return (
-        <div className="bg-gray-50 min-h-screen">
+        <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
             {/* Hero Section */}
             <section
-                className="py-16 md:py-24 bg-white relative overflow-hidden"
+                className="py-16 md:py-24 bg-white dark:bg-gray-800 relative overflow-hidden"
                 style={{
                     backgroundImage: 'url(/images/hero-bg.png)',
                     backgroundSize: 'cover',
@@ -130,17 +130,17 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                 }}
             >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-white/40" />
+                <div className="absolute inset-0 bg-white/40 dark:bg-gray-800/60" />
 
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center relative z-10">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
                         Portal Informasi{' '}
                         <TypingText
                             texts={['Kedinasan', 'Pendidikan', 'Bruno']}
                             className="gradient-text"
                         />
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
                         Pusat informasi resmi dari Wilayah Cabang Bidang Pendidikan Bruno.
                         Temukan pengumuman, berita, dan dokumen penting.
                     </p>
@@ -151,25 +151,25 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <div className="text-3xl md:text-4xl font-bold text-purple-600">
                                 <AnimatedCounter end={total} suffix="+" />
                             </div>
-                            <div className="text-sm text-gray-500">Informasi</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Informasi</div>
                         </div>
                         <div className="text-center">
                             <div className="text-3xl md:text-4xl font-bold text-pink-500">
                                 <AnimatedCounter end={categories.length} />
                             </div>
-                            <div className="text-sm text-gray-500">Kategori</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Kategori</div>
                         </div>
                         <div className="text-center">
                             <div className="text-3xl md:text-4xl font-bold text-purple-600">
                                 <AnimatedCounter end={24} suffix="/7" />
                             </div>
-                            <div className="text-sm text-gray-500">Akses</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Akses</div>
                         </div>
                     </div>
 
                     {/* Search Box */}
                     <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
-                        <div className="flex items-center bg-white border-2 border-gray-200 rounded-full overflow-hidden focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-100 transition-all">
+                        <div className="flex items-center bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-full overflow-hidden focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-100 dark:focus-within:ring-purple-900 transition-all">
                             <svg className="ml-5 w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
@@ -178,7 +178,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 placeholder="Cari informasi..."
-                                className="flex-1 px-4 py-4 text-base border-none focus:outline-none bg-transparent"
+                                className="flex-1 px-4 py-4 text-base border-none focus:outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400"
                             />
                             <button
                                 type="submit"
@@ -195,7 +195,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
             <section id="info" className="py-12 md:py-16">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8">
                     {/* Section Title */}
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-10">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-10">
                         Informasi Terbaru
                     </h2>
 
@@ -205,7 +205,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             onClick={() => handleCategoryChange('')}
                             className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${!currentCategory
                                 ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
-                                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                 }`}
                         >
                             Semua
@@ -216,7 +216,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                 onClick={() => handleCategoryChange(cat.id)}
                                 className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all ${currentCategory === cat.id
                                     ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
-                                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                     }`}
                             >
                                 <span>{categoryEmojis[cat.name] || '📁'}</span>

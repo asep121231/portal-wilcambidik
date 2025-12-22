@@ -48,7 +48,7 @@ export default function PostCard({
 
     return (
         <Link href={`/berita/${id}`} className="block group">
-            <article className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <article className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-gray-900/50 hover:-translate-y-1 transition-all duration-300">
                 {/* Thumbnail */}
                 <div className={`relative h-36 bg-gradient-to-br ${thumbnail.gradient} flex items-center justify-center overflow-hidden`}>
                     {/* Pattern overlay */}
@@ -75,25 +75,25 @@ export default function PostCard({
                 <div className="p-5">
                     {/* Category Badge */}
                     {categoryName && (
-                        <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 uppercase tracking-wide mb-3">
+                        <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 uppercase tracking-wide mb-3">
                             {categoryName}
                         </span>
                     )}
 
                     {/* Title */}
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-700 transition-colors">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors">
                         {title}
                     </h3>
 
                     {/* Excerpt */}
-                    <p className="text-gray-600 line-clamp-2 text-sm leading-relaxed mb-4">
+                    <p className="text-gray-600 dark:text-gray-400 line-clamp-2 text-sm leading-relaxed mb-4">
                         {excerpt}
                     </p>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                        <time className="text-xs text-gray-500">{formattedDate}</time>
-                        <span className="text-xs font-medium text-purple-600 group-hover:text-purple-700 flex items-center gap-1">
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
+                        <time className="text-xs text-gray-500 dark:text-gray-500">{formattedDate}</time>
+                        <span className="text-xs font-medium text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 flex items-center gap-1">
                             Baca
                             <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

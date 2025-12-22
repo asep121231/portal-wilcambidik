@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Tailwind v4: Enable dark mode with class selector */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Tailwind v4: Define source files to scan */
 @source "../components/**/*.tsx";
 @source "../app/**/*.tsx";
@@ -28,6 +31,10 @@ body {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass-effect {
+  background: rgba(17, 24, 39, 0.85);
 }
 
 /* Hide scrollbar */
@@ -86,6 +93,11 @@ body {
   z-index: 999;
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
+}
+
+.dark .drawer-panel {
+  background: #111827;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
 }
 
 .drawer-panel.open {
