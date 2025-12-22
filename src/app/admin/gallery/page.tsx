@@ -92,7 +92,7 @@ export default function AdminGalleryPage() {
             formData.append('activityId', activityId)
 
             try {
-                const response = await fetch('/api/upload-gallery', {
+                const response = await fetch('/api/gallery/upload', {
                     method: 'POST',
                     body: formData,
                 })
