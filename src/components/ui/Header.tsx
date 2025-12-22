@@ -10,6 +10,7 @@ const navigation = [
     { name: 'Beranda', href: '/' },
     { name: 'Informasi', href: '/#info' },
     { name: 'Dokumen', href: '/dokumen' },
+    { name: 'Data Sekolah', href: '/data-sekolah' },
 ]
 
 export default function Header() {

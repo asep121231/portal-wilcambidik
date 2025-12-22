@@ -117,6 +117,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/data-sekolah" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                                    Data Sekolah
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/admin" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                                     Admin Panel
                                 </Link>
