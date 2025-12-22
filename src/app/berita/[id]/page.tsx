@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import StatusBadge from '@/components/ui/StatusBadge'
 import ShareButton from '@/components/ui/ShareButton'
+import CopyLinkButton from '@/components/ui/CopyLinkButton'
+import ReadingTime from '@/components/ui/ReadingTime'
+import RelatedPosts from '@/components/ui/RelatedPosts'
 import type { PostDetail } from '@/types/database'
 import type { Metadata } from 'next'
 
@@ -29,6 +32,23 @@ async function getPost(id: string) {
     }
 
     return data as PostDetail
+}
+
+async function getRelatedPosts(categoryId: string | null, currentPostId: string) {
+    if (!categoryId) return []
+
+    const supabase = await createClient()
+
+    const { data } = await supabase
+        .from('posts')
+        .select('id, title, created_at, categories(name)')
+        .eq('category_id', categoryId)
+        .eq('status', 'published')
+        .neq('id', currentPostId)
+        .order('created_at', { ascending: false })
+        .limit(3)
+
+    return data || []
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
@@ -62,6 +82,9 @@ export default async function PostPage({ params }: PostPageProps) {
     if (!post) {
         notFound()
     }
+
+    // Get related posts from same category
+    const relatedPosts = await getRelatedPosts(post.category_id, post.id)
 
     const formattedDate = new Date(post.created_at).toLocaleDateString('id-ID', {
         weekday: 'long',
@@ -106,13 +129,17 @@ export default async function PostPage({ params }: PostPageProps) {
                     </h1>
 
                     {/* Meta Info */}
-                    <div className="flex items-center gap-4 text-white/70">
+                    <div className="flex items-center gap-4 flex-wrap text-white/70">
                         <div className="flex items-center gap-2">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <time className="text-sm">{formattedDate}</time>
                         </div>
+
+                        {/* Reading Time */}
+                        <ReadingTime content={post.content} />
+
                         {post.attachments && post.attachments.length > 0 && (
                             <div className="flex items-center gap-2">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,11 +209,15 @@ export default async function PostPage({ params }: PostPageProps) {
                     )}
                 </div>
 
-                {/* Share Section */}
-                <div className="mt-8 flex items-center justify-center gap-4">
+                {/* Share & Copy Section */}
+                <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
                     <span className="text-sm text-gray-500">Bagikan:</span>
                     <ShareButton title={post.title} />
+                    <CopyLinkButton />
                 </div>
+
+                {/* Related Posts */}
+                <RelatedPosts posts={relatedPosts} />
             </article>
         </div>
     )
