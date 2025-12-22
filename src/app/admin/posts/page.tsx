@@ -7,7 +7,7 @@ async function getPosts() {
 
     const { data, error } = await supabase
         .from('posts')
-        .select('*, categories(name)')
+        .select('id, title, content, status, urgency, created_at, categories(name)')
         .order('created_at', { ascending: false })
 
     if (error) {
