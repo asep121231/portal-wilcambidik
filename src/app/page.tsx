@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import SearchContainer from '@/components/search/SearchContainer'
 import { PostCardSkeleton } from '@/components/ui/Loading'
-import { searchPosts } from '@/lib/actions/search'
+import { getPostsWithThumbnails } from '@/lib/actions/posts'
 
 // ISR: Revalidate every 5 minutes
 export const revalidate = 300
@@ -43,8 +43,7 @@ function LoadingState() {
 export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams
 
-  const response = await searchPosts({
-    keyword: params.q,
+  const response = await getPostsWithThumbnails({
     categoryId: params.category,
     page: Number(params.page) || 1,
     limit: 9
@@ -53,9 +52,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <Suspense fallback={<LoadingState />}>
       <SearchContainer
-        initialPosts={response.data}
+        initialPosts={response.posts}
         initialTotal={response.total}
       />
     </Suspense>
   )
 }
+

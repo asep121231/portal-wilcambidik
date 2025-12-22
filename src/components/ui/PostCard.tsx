@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface PostCardProps {
     id: string
@@ -7,6 +8,8 @@ interface PostCardProps {
     categoryName: string | null
     urgency: string
     createdAt: string
+    thumbnailUrl?: string | null
+    attachmentCount?: number
 }
 
 // Category thumbnail colors and patterns
@@ -17,6 +20,7 @@ const categoryThumbnails: Record<string, { gradient: string; icon: string }> = {
     'Laporan': { gradient: 'from-green-500 to-emerald-400', icon: '📊' },
     'Kegiatan': { gradient: 'from-orange-500 to-amber-400', icon: '🎯' },
     'Umum': { gradient: 'from-gray-500 to-slate-400', icon: '📌' },
+    'Informasi Umum': { gradient: 'from-purple-500 to-pink-400', icon: '📋' },
 }
 
 export default function PostCard({
@@ -25,7 +29,9 @@ export default function PostCard({
     content,
     categoryName,
     urgency,
-    createdAt
+    createdAt,
+    thumbnailUrl,
+    attachmentCount = 0
 }: PostCardProps) {
     const formattedDate = new Date(createdAt).toLocaleDateString('id-ID', {
         day: 'numeric',
@@ -33,13 +39,15 @@ export default function PostCard({
         year: 'numeric',
     })
 
-    const excerpt = content.length > 120
-        ? content.substring(0, 120) + '...'
-        : content
+    // Strip HTML tags from content for excerpt
+    const plainContent = content.replace(/<[^>]*>/g, '')
+    const excerpt = plainContent.length > 120
+        ? plainContent.substring(0, 120) + '...'
+        : plainContent
 
     const urgencyBadge = {
-        urgent: { label: 'MENDESAK', bg: 'bg-red-100', text: 'text-red-700' },
-        deadline: { label: 'BATAS WAKTU', bg: 'bg-amber-100', text: 'text-amber-700' },
+        urgent: { label: '🔴 MENDESAK', bg: 'bg-red-500', text: 'text-white' },
+        deadline: { label: '⏰ BATAS WAKTU', bg: 'bg-yellow-500', text: 'text-white' },
         general: null,
         archive: null,
     }[urgency]
@@ -50,23 +58,44 @@ export default function PostCard({
         <Link href={`/berita/${id}`} className="block group">
             <article className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-gray-900/50 hover:-translate-y-1 transition-all duration-300">
                 {/* Thumbnail */}
-                <div className={`relative h-36 bg-gradient-to-br ${thumbnail.gradient} flex items-center justify-center overflow-hidden`}>
-                    {/* Pattern overlay */}
-                    <div className="absolute inset-0 opacity-10">
-                        <div className="absolute inset-0" style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        }} />
-                    </div>
-
-                    {/* Icon */}
-                    <span className="text-6xl filter drop-shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                        {thumbnail.icon}
-                    </span>
+                <div className="relative h-40 overflow-hidden">
+                    {thumbnailUrl ? (
+                        <>
+                            <Image
+                                src={thumbnailUrl}
+                                alt={title}
+                                fill
+                                className="object-cover transition-transform group-hover:scale-105"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                        </>
+                    ) : (
+                        <div className={`w-full h-full bg-gradient-to-br ${thumbnail.gradient} flex items-center justify-center`}>
+                            {/* Pattern overlay */}
+                            <div className="absolute inset-0 opacity-10">
+                                <div className="absolute inset-0" style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                                }} />
+                            </div>
+                            {/* Icon */}
+                            <span className="text-6xl filter drop-shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                                {thumbnail.icon}
+                            </span>
+                        </div>
+                    )}
 
                     {/* Urgency badge on thumbnail */}
                     {urgencyBadge && (
-                        <span className={`absolute top-3 right-3 px-3 py-1 text-xs font-bold rounded-full shadow-lg ${urgencyBadge.bg} ${urgencyBadge.text}`}>
+                        <span className={`absolute top-3 left-3 px-3 py-1 text-xs font-bold rounded-full shadow-lg ${urgencyBadge.bg} ${urgencyBadge.text}`}>
                             {urgencyBadge.label}
+                        </span>
+                    )}
+
+                    {/* Attachment count */}
+                    {attachmentCount > 0 && (
+                        <span className="absolute top-3 right-3 px-2 py-1 text-xs font-medium rounded-full bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 shadow-lg flex items-center gap-1">
+                            📎 {attachmentCount}
                         </span>
                     )}
                 </div>

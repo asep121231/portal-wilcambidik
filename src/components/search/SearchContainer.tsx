@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { searchPosts } from '@/lib/actions/search'
+import { getPostsWithThumbnails } from '@/lib/actions/posts'
 import { getCategories } from '@/lib/actions/categories'
 import { getSchoolStats } from '@/lib/actions/schools'
 import { getActivities } from '@/lib/actions/gallery'
@@ -65,6 +66,8 @@ interface Post {
     urgency: string
     created_at: string
     category_name: string | null
+    thumbnail_url?: string | null
+    attachment_count?: number
 }
 
 interface Category {
@@ -172,14 +175,26 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
         startTransition(async () => {
             const qs = createQueryString({ q: searchInput, page: '' })
             router.push(`${pathname}?${qs}`)
-            const { data: newPosts, total: newTotal } = await searchPosts({
-                keyword: searchInput,
-                categoryId: currentCategory,
-                page: 1,
-                limit: POSTS_PER_PAGE,
-            })
-            setPosts(newPosts)
-            setTotal(newTotal)
+            // For keyword search, use searchPosts (no thumbnail needed for search results)
+            // But for filtered results, use getPostsWithThumbnails
+            if (searchInput) {
+                const { data: newPosts, total: newTotal } = await searchPosts({
+                    keyword: searchInput,
+                    categoryId: currentCategory,
+                    page: 1,
+                    limit: POSTS_PER_PAGE,
+                })
+                setPosts(newPosts)
+                setTotal(newTotal)
+            } else {
+                const { posts: newPosts, total: newTotal } = await getPostsWithThumbnails({
+                    categoryId: currentCategory,
+                    page: 1,
+                    limit: POSTS_PER_PAGE,
+                })
+                setPosts(newPosts)
+                setTotal(newTotal)
+            }
         })
     }
 
@@ -187,8 +202,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
         startTransition(async () => {
             const qs = createQueryString({ category: categoryId, page: '' })
             router.push(`${pathname}?${qs}`)
-            const { data: newPosts, total: newTotal } = await searchPosts({
-                keyword: currentSearch,
+            const { posts: newPosts, total: newTotal } = await getPostsWithThumbnails({
                 categoryId: categoryId,
                 page: 1,
                 limit: POSTS_PER_PAGE,
@@ -202,8 +216,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
         startTransition(async () => {
             const qs = createQueryString({ page: page.toString() })
             router.push(`${pathname}?${qs}`)
-            const { data: newPosts, total: newTotal } = await searchPosts({
-                keyword: currentSearch,
+            const { posts: newPosts, total: newTotal } = await getPostsWithThumbnails({
                 categoryId: currentCategory,
                 page,
                 limit: POSTS_PER_PAGE,
@@ -515,6 +528,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                         categoryName={post.category_name}
                                         urgency={post.urgency}
                                         createdAt={post.created_at}
+                                        thumbnailUrl={post.thumbnail_url}
+                                        attachmentCount={post.attachment_count}
                                     />
                                 </FadeIn>
                             ))}
