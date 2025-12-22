@@ -12,7 +12,6 @@ const navigation = [
     { name: 'Galeri', href: '/galeri' },
     { name: 'Dokumen', href: '/dokumen' },
     { name: 'Data Sekolah', href: '/data-sekolah' },
-    { name: 'Struktur', href: '/struktur-organisasi' },
 ]
 
 export default function Header() {

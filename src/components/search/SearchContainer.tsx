@@ -345,6 +345,94 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                 </div>
             </section>
 
+            {/* Organization Structure Section */}
+            <section className="py-12 bg-gray-50 dark:bg-gray-900">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-2">
+                        👥 Struktur Organisasi
+                    </h2>
+                    <p className="text-center text-gray-500 dark:text-gray-400 mb-8">
+                        Wilcambidik Bruno, Kecamatan Bruno, Kabupaten Purworejo
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+                        {/* Korwilcambidik */}
+                        <FadeIn delay={0}>
+                            <div className="md:col-span-4 flex justify-center mb-4">
+                                <div className="relative group">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-orange-500 rounded-2xl blur opacity-40 group-hover:opacity-75 transition-opacity" />
+                                    <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-6 border border-purple-100 dark:border-purple-800 flex items-center gap-4 min-w-[320px]">
+                                        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-orange-500 p-0.5 flex-shrink-0">
+                                            <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
+                                                <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">AK</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">👑 Korwilcambidik Bruno</div>
+                                            <h3 className="font-bold text-gray-900 dark:text-white">AKHMADI, S.Pd., M.M.Pd</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </FadeIn>
+
+                        {/* Pengawas 1 */}
+                        <FadeIn delay={100}>
+                            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-blue-100 dark:border-blue-800 hover:shadow-lg transition-shadow">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 p-0.5 flex-shrink-0">
+                                        <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
+                                            <span className="text-sm font-bold text-blue-600">NW</span>
+                                        </div>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Pengawas</div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">NGESTI WAHYUNI, S.Pd.SD.</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </FadeIn>
+
+                        {/* Pengawas 2 */}
+                        <FadeIn delay={200}>
+                            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-blue-100 dark:border-blue-800 hover:shadow-lg transition-shadow">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 p-0.5 flex-shrink-0">
+                                        <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
+                                            <span className="text-sm font-bold text-blue-600">UU</span>
+                                        </div>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Pengawas</div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">UMI ULFATULJANAH, S.Pd.SD.</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </FadeIn>
+
+                        {/* Tenaga Teknis */}
+                        <FadeIn delay={300}>
+                            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-green-100 dark:border-green-800 hover:shadow-lg transition-shadow">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-400 p-0.5 flex-shrink-0">
+                                        <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
+                                            <span className="text-sm font-bold text-green-600">JP</span>
+                                        </div>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="text-xs text-green-600 dark:text-green-400 font-medium">Tenaga Teknis</div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm">JUPRI</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </FadeIn>
+
+                        {/* Empty slot for balance on mobile */}
+                        <div className="hidden md:block" />
+                    </div>
+                </div>
+            </section>
+
             {/* School Statistics Section */}
             {schoolStats && schoolStats.totalSchools > 0 && (
                 <section className="py-12 bg-gradient-to-r from-purple-600 to-orange-500">
