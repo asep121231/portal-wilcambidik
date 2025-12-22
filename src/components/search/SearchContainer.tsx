@@ -2,8 +2,12 @@
 
 import { useState, useEffect, useTransition, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
 import { searchPosts } from '@/lib/actions/search'
 import { getCategories } from '@/lib/actions/categories'
+import { getSchoolStats } from '@/lib/actions/schools'
+import { getActivities } from '@/lib/actions/gallery'
 import PostCard from '@/components/ui/PostCard'
 import { PostCardSkeleton } from '@/components/ui/Loading'
 import TypingText from '@/components/ui/TypingText'
@@ -21,6 +25,38 @@ const categoryEmojis: Record<string, string> = {
     'Umum': '📌',
 }
 
+// Quick Links data
+const quickLinks = [
+    {
+        title: 'Dokumen',
+        description: 'Unduh berkas dan dokumen penting',
+        href: '/dokumen',
+        icon: '📄',
+        color: 'from-blue-500 to-blue-600',
+    },
+    {
+        title: 'Data Sekolah',
+        description: 'Statistik dan informasi sekolah',
+        href: '/data-sekolah',
+        icon: '🏫',
+        color: 'from-green-500 to-green-600',
+    },
+    {
+        title: 'Galeri Kegiatan',
+        description: 'Dokumentasi foto kegiatan',
+        href: '/galeri',
+        icon: '📸',
+        color: 'from-purple-500 to-purple-600',
+    },
+    {
+        title: 'Berita',
+        description: 'Informasi dan pengumuman terbaru',
+        href: '/#info',
+        icon: '📰',
+        color: 'from-orange-500 to-orange-600',
+    },
+]
+
 interface Post {
     id: string
     title: string
@@ -33,6 +69,20 @@ interface Post {
 interface Category {
     id: string
     name: string
+}
+
+interface SchoolStats {
+    totalSchools: number
+    totalStudents: number
+    totalTeachers: number
+    byLevel: { name: string; count: number; students: number; teachers: number }[]
+}
+
+interface Activity {
+    id: string
+    title: string
+    activity_date: string
+    activity_photos?: { id: string; photo_url: string }[]
 }
 
 interface SearchContainerProps {
@@ -51,6 +101,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
     const [posts, setPosts] = useState<Post[]>(initialPosts)
     const [total, setTotal] = useState(initialTotal)
     const [categories, setCategories] = useState<Category[]>([])
+    const [schoolStats, setSchoolStats] = useState<SchoolStats | null>(null)
+    const [recentActivities, setRecentActivities] = useState<Activity[]>([])
 
     const currentSearch = searchParams.get('q') || ''
     const currentCategory = searchParams.get('category') || ''
@@ -60,6 +112,25 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
 
     useEffect(() => {
         getCategories().then(setCategories)
+        getSchoolStats().then((data) => {
+            // Process data to match our interface
+            const stats = data.stats || []
+            const totalSchools = stats.reduce((acc: number, s: { count: number }) => acc + (s.count || 0), 0)
+            const totalStudents = stats.reduce((acc: number, s: { totalPd: number }) => acc + (s.totalPd || 0), 0)
+            const totalTeachers = stats.reduce((acc: number, s: { totalGuru: number }) => acc + (s.totalGuru || 0), 0)
+            const byLevel = stats.map((s: { name: string; count: number; totalPd: number; totalGuru: number }) => ({
+                name: s.name,
+                count: s.count || 0,
+                students: s.totalPd || 0,
+                teachers: s.totalGuru || 0
+            }))
+            setSchoolStats({ totalSchools, totalStudents, totalTeachers, byLevel })
+        })
+        getActivities(undefined, true).then((activities) => {
+            // Filter activities that have photos
+            const withPhotos = activities.filter(a => a.activity_photos && a.activity_photos.length > 0)
+            setRecentActivities(withPhotos.slice(0, 4))
+        })
     }, [])
 
     const createQueryString = useCallback((params: Record<string, string>) => {
@@ -195,12 +266,162 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                 </div>
             </section>
 
+            {/* Quick Links Section */}
+            <section className="py-12 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">
+                        🚀 Akses Cepat
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        {quickLinks.map((link, index) => (
+                            <FadeIn key={link.href} delay={index * 100}>
+                                <Link
+                                    href={link.href}
+                                    className="group block p-6 bg-gray-50 dark:bg-gray-700 rounded-2xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-gray-600"
+                                >
+                                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${link.color} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform`}>
+                                        {link.icon}
+                                    </div>
+                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                                        {link.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {link.description}
+                                    </p>
+                                </Link>
+                            </FadeIn>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* School Statistics Section */}
+            {schoolStats && schoolStats.totalSchools > 0 && (
+                <section className="py-12 bg-gradient-to-r from-purple-600 to-orange-500">
+                    <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                        <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
+                            🏫 Statistik Sekolah Kecamatan Bruno
+                        </h2>
+                        <p className="text-white/80 text-center mb-8">Data sekolah di bawah koordinasi Wilcambidik Bruno</p>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                                <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                                    <AnimatedCounter end={schoolStats.totalSchools} />
+                                </div>
+                                <div className="text-white/80">Total Sekolah</div>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                                <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                                    <AnimatedCounter end={schoolStats.totalStudents} />
+                                </div>
+                                <div className="text-white/80">Peserta Didik</div>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                                <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                                    <AnimatedCounter end={schoolStats.totalTeachers} />
+                                </div>
+                                <div className="text-white/80">Guru</div>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                                <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                                    <AnimatedCounter end={schoolStats.byLevel?.length || 0} />
+                                </div>
+                                <div className="text-white/80">Jenjang</div>
+                            </div>
+                        </div>
+
+                        {schoolStats.byLevel && schoolStats.byLevel.length > 0 && (
+                            <div className="mt-6 flex flex-wrap justify-center gap-3">
+                                {schoolStats.byLevel.map((level) => (
+                                    <div key={level.name} className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm">
+                                        {level.name}: {level.count} sekolah
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="text-center mt-6">
+                            <Link
+                                href="/data-sekolah"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-purple-600 font-medium rounded-full hover:shadow-lg transition-all"
+                            >
+                                Lihat Detail Data Sekolah
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* Recent Gallery Section */}
+            {recentActivities.length > 0 && (
+                <section className="py-12 bg-white dark:bg-gray-800">
+                    <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                                📸 Galeri Kegiatan Terbaru
+                            </h2>
+                            <Link
+                                href="/galeri"
+                                className="hidden md:flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium"
+                            >
+                                Lihat Semua
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {recentActivities.map((activity, index) => (
+                                <FadeIn key={activity.id} delay={index * 100}>
+                                    <Link
+                                        href="/galeri"
+                                        className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-700"
+                                    >
+                                        {activity.activity_photos && activity.activity_photos[0] && (
+                                            <Image
+                                                src={activity.activity_photos[0].photo_url}
+                                                alt={activity.title}
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                            />
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform">
+                                            <p className="text-white text-sm font-medium line-clamp-2">
+                                                {activity.title}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                </FadeIn>
+                            ))}
+                        </div>
+
+                        <div className="text-center mt-6 md:hidden">
+                            <Link
+                                href="/galeri"
+                                className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium"
+                            >
+                                Lihat Semua Galeri
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* Content Section */}
             <section id="info" className="py-12 md:py-16">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8">
                     {/* Section Title */}
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-10">
-                        Informasi Terbaru
+                        📰 Informasi Terbaru
                     </h2>
 
                     {/* Category Filters */}
@@ -303,3 +524,4 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
         </div>
     )
 }
+
