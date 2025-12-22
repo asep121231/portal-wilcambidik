@@ -61,14 +61,14 @@ export default function GaleriPage() {
             </section>
 
             {/* Filter */}
-            <section className="py-8 -mt-6">
+            <section className="py-8">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8">
                     <div className="flex flex-wrap gap-2 justify-center">
                         <button
                             onClick={() => setSelectedCategory('')}
                             className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all shadow ${!selectedCategory
-                                ? 'bg-white text-purple-600 shadow-lg'
-                                : 'bg-white/20 text-white hover:bg-white/30'
+                                ? 'bg-purple-600 text-white shadow-lg'
+                                : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-purple-300'
                                 }`}
                         >
                             Semua
@@ -78,8 +78,8 @@ export default function GaleriPage() {
                                 key={cat.id}
                                 onClick={() => setSelectedCategory(cat.id)}
                                 className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all shadow ${selectedCategory === cat.id
-                                    ? 'bg-white text-purple-600 shadow-lg'
-                                    : 'bg-white/20 text-white hover:bg-white/30'
+                                    ? 'bg-purple-600 text-white shadow-lg'
+                                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-purple-300'
                                     }`}
                             >
                                 <span>{cat.icon}</span>
