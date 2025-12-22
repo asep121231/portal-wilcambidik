@@ -43,6 +43,133 @@ export async function trackAttachmentDownload(attachmentId: string, userAgent?: 
     }
 }
 
+// Track page visit for website analytics
+interface PageVisitData {
+    pagePath: string
+    pageTitle?: string
+    referrer?: string | null
+    userAgent?: string
+    deviceType?: string
+    browser?: string
+    os?: string
+    sessionId?: string
+}
+
+export async function trackPageVisit(data: PageVisitData) {
+    const supabase = await createClient()
+
+    const ipHash = Math.random().toString(36).substring(2, 15)
+
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
+            .from('page_visits')
+            .insert({
+                page_path: data.pagePath,
+                page_title: data.pageTitle || null,
+                referrer: data.referrer || null,
+                user_agent: data.userAgent || null,
+                device_type: data.deviceType || null,
+                browser: data.browser || null,
+                os: data.os || null,
+                session_id: data.sessionId || null,
+                ip_hash: ipHash,
+            })
+    } catch (error) {
+        console.error('Error tracking page visit:', error)
+    }
+}
+
+// Get visitor statistics
+export async function getVisitorStats(daysBack: number = 30) {
+    const supabase = await createClient()
+
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - daysBack)
+
+    let totalVisits = 0
+    let uniqueVisitors = 0
+    let deviceStats: { device: string; count: number }[] = []
+    let browserStats: { browser: string; count: number }[] = []
+    let topPages: { page: string; count: number }[] = []
+    let dailyVisits: { date: string; count: number }[] = []
+
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: visits } = await (supabase as any)
+            .from('page_visits')
+            .select('*')
+            .gte('visited_at', startDate.toISOString())
+
+        if (visits && visits.length > 0) {
+            totalVisits = visits.length
+
+            // Unique visitors by session_id
+            const uniqueSessions = new Set(visits.map((v: { session_id: string }) => v.session_id))
+            uniqueVisitors = uniqueSessions.size
+
+            // Device stats
+            const deviceMap: Record<string, number> = {}
+            visits.forEach((v: { device_type: string }) => {
+                const device = v.device_type || 'unknown'
+                deviceMap[device] = (deviceMap[device] || 0) + 1
+            })
+            deviceStats = Object.entries(deviceMap)
+                .map(([device, count]) => ({ device, count }))
+                .sort((a, b) => b.count - a.count)
+
+            // Browser stats
+            const browserMap: Record<string, number> = {}
+            visits.forEach((v: { browser: string }) => {
+                const browser = v.browser || 'unknown'
+                browserMap[browser] = (browserMap[browser] || 0) + 1
+            })
+            browserStats = Object.entries(browserMap)
+                .map(([browser, count]) => ({ browser, count }))
+                .sort((a, b) => b.count - a.count)
+
+            // Top pages
+            const pageMap: Record<string, number> = {}
+            visits.forEach((v: { page_path: string }) => {
+                pageMap[v.page_path] = (pageMap[v.page_path] || 0) + 1
+            })
+            topPages = Object.entries(pageMap)
+                .map(([page, count]) => ({ page, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10)
+
+            // Daily visits
+            const dailyMap: Record<string, number> = {}
+            for (let i = 0; i <= daysBack; i++) {
+                const date = new Date()
+                date.setDate(date.getDate() - i)
+                const dateStr = date.toISOString().split('T')[0]
+                dailyMap[dateStr] = 0
+            }
+            visits.forEach((v: { visited_at: string }) => {
+                const dateStr = new Date(v.visited_at).toISOString().split('T')[0]
+                if (dailyMap[dateStr] !== undefined) {
+                    dailyMap[dateStr]++
+                }
+            })
+            dailyVisits = Object.entries(dailyMap)
+                .map(([date, count]) => ({ date, count }))
+                .sort((a, b) => a.date.localeCompare(b.date))
+        }
+    } catch (error) {
+        console.error('Error getting visitor stats:', error)
+    }
+
+    return {
+        totalVisits,
+        uniqueVisitors,
+        deviceStats,
+        browserStats,
+        topPages,
+        dailyVisits,
+    }
+}
+
 // Get dashboard stats
 export async function getDashboardStats() {
     const supabase = await createClient()

@@ -6,6 +6,7 @@ import Footer from "@/components/ui/Footer";
 import BackToTop from "@/components/ui/BackToTop";
 import { PWARegister } from "@/components/pwa/PWARegister";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import PageTracker from "@/components/analytics/PageTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -75,6 +76,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
         <ThemeProvider>
+          <PageTracker />
           <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-1">{children}</main>
@@ -87,3 +89,4 @@ export default function RootLayout({
     </html>
   );
 }
+
