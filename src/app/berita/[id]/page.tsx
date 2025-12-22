@@ -6,6 +6,7 @@ import ShareButton from '@/components/ui/ShareButton'
 import CopyLinkButton from '@/components/ui/CopyLinkButton'
 import ReadingTime from '@/components/ui/ReadingTime'
 import RelatedPosts from '@/components/ui/RelatedPosts'
+import ViewTracker from '@/components/ui/ViewTracker'
 import type { PostDetail } from '@/types/database'
 import type { Metadata } from 'next'
 
@@ -97,6 +98,9 @@ export default async function PostPage({ params }: PostPageProps) {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-gray-50">
+            {/* Track View */}
+            <ViewTracker postId={post.id} />
+
             {/* Hero Header */}
             <div className="bg-gradient-to-r from-purple-600 to-orange-500 pt-8 pb-24">
                 <div className="max-w-4xl mx-auto px-4 lg:px-8">
