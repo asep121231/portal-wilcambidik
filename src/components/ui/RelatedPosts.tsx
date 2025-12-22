@@ -14,8 +14,8 @@ interface RelatedPostsProps {
 // Category colors for thumbnails
 const categoryColors: Record<string, string> = {
     'Surat Edaran': 'from-blue-500 to-cyan-400',
-    'Pengumuman': 'from-purple-500 to-pink-400',
-    'Undangan': 'from-pink-500 to-rose-400',
+    'Pengumuman': 'from-purple-500 to-orange-400',
+    'Undangan': 'from-orange-500 to-amber-400',
     'Laporan': 'from-green-500 to-emerald-400',
     'Kegiatan': 'from-orange-500 to-amber-400',
     'Umum': 'from-gray-500 to-slate-400',
@@ -27,7 +27,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
     return (
         <div className="mt-12 pt-8 border-t border-gray-200">
             <h2 className="flex items-center gap-3 text-xl font-bold text-gray-900 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-orange-500 rounded-xl flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                     </svg>
@@ -38,7 +38,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
             <div className="grid gap-4 md:grid-cols-3">
                 {posts.map((post) => {
                     const categoryName = post.categories?.name || ''
-                    const gradient = categoryColors[categoryName] || 'from-purple-500 to-pink-400'
+                    const gradient = categoryColors[categoryName] || 'from-purple-500 to-orange-400'
 
                     return (
                         <Link

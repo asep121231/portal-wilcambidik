@@ -25,7 +25,7 @@ export default function OfflinePage() {
                 {/* Retry Button */}
                 <button
                     onClick={() => window.location.reload()}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-medium rounded-full hover:opacity-90 transition-opacity shadow-lg"
+                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-orange-500 text-white font-medium rounded-full hover:opacity-90 transition-opacity shadow-lg"
                 >
                     Coba Lagi
                 </button>

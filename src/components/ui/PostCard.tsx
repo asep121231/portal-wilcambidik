@@ -12,8 +12,8 @@ interface PostCardProps {
 // Category thumbnail colors and patterns
 const categoryThumbnails: Record<string, { gradient: string; icon: string }> = {
     'Surat Edaran': { gradient: 'from-blue-500 to-cyan-400', icon: '📋' },
-    'Pengumuman': { gradient: 'from-purple-500 to-pink-400', icon: '📢' },
-    'Undangan': { gradient: 'from-pink-500 to-rose-400', icon: '💌' },
+    'Pengumuman': { gradient: 'from-purple-500 to-orange-400', icon: '📢' },
+    'Undangan': { gradient: 'from-orange-500 to-amber-400', icon: '💌' },
     'Laporan': { gradient: 'from-green-500 to-emerald-400', icon: '📊' },
     'Kegiatan': { gradient: 'from-orange-500 to-amber-400', icon: '🎯' },
     'Umum': { gradient: 'from-gray-500 to-slate-400', icon: '📌' },
@@ -44,7 +44,7 @@ export default function PostCard({
         archive: null,
     }[urgency]
 
-    const thumbnail = categoryThumbnails[categoryName || ''] || { gradient: 'from-purple-500 to-pink-400', icon: '📄' }
+    const thumbnail = categoryThumbnails[categoryName || ''] || { gradient: 'from-purple-500 to-orange-400', icon: '📄' }
 
     return (
         <Link href={`/berita/${id}`} className="block group">

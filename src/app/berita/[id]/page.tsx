@@ -98,7 +98,7 @@ export default async function PostPage({ params }: PostPageProps) {
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-50/50 to-gray-50">
             {/* Hero Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-pink-500 pt-8 pb-24">
+            <div className="bg-gradient-to-r from-purple-600 to-orange-500 pt-8 pb-24">
                 <div className="max-w-4xl mx-auto px-4 lg:px-8">
                     {/* Back Button */}
                     <Link

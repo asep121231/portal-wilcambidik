@@ -158,7 +158,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             <div className="text-sm text-gray-500 dark:text-gray-400">Informasi</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-3xl md:text-4xl font-bold text-pink-500">
+                            <div className="text-3xl md:text-4xl font-bold text-orange-500">
                                 <AnimatedCounter end={categories.length} />
                             </div>
                             <div className="text-sm text-gray-500 dark:text-gray-400">Kategori</div>
@@ -186,7 +186,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                             />
                             <button
                                 type="submit"
-                                className="m-1.5 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-medium rounded-full hover:opacity-90 transition-opacity"
+                                className="m-1.5 px-6 py-3 bg-gradient-to-r from-purple-600 to-orange-500 text-white font-medium rounded-full hover:opacity-90 transition-opacity"
                             >
                                 Cari
                             </button>
@@ -208,7 +208,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                         <button
                             onClick={() => handleCategoryChange('')}
                             className={`px-5 py-2.5 text-sm font-medium rounded-full transition-all ${!currentCategory
-                                ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
+                                ? 'bg-gradient-to-r from-purple-600 to-orange-500 text-white shadow-lg'
                                 : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                 }`}
                         >
@@ -219,7 +219,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                 key={cat.id}
                                 onClick={() => handleCategoryChange(cat.id)}
                                 className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all ${currentCategory === cat.id
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
+                                    ? 'bg-gradient-to-r from-purple-600 to-orange-500 text-white shadow-lg'
                                     : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                     }`}
                             >

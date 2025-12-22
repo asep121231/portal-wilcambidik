@@ -41,7 +41,7 @@ export default function EmailSubscribeForm() {
     }
 
     return (
-        <div className="bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl p-8 text-white">
+        <div className="bg-gradient-to-r from-purple-600 to-orange-500 rounded-2xl p-8 text-white">
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

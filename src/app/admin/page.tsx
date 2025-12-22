@@ -32,7 +32,7 @@ export default async function AdminDashboardPage() {
                 </div>
                 <Link
                     href="/admin/posts/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors shadow-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-orange-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors shadow-lg"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -88,8 +88,8 @@ export default async function AdminDashboardPage() {
 
                 <div className="bg-white rounded-xl border border-gray-200 p-5">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
-                            <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                            <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
                             return (
                                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                                     <div
-                                        className="w-full bg-gradient-to-t from-purple-600 to-pink-500 rounded-t-md transition-all"
+                                        className="w-full bg-gradient-to-t from-purple-600 to-orange-500 rounded-t-md transition-all"
                                         style={{ height: `${Math.max(height, 4)}%` }}
                                     />
                                     <span className="text-xs text-gray-500">

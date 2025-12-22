@@ -129,7 +129,7 @@ export default function NotificationButton() {
             disabled={isLoading}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all disabled:opacity-50 ${isSubscribed
                 ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                : 'bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 shadow-lg'
+                : 'bg-gradient-to-r from-purple-600 to-orange-500 text-white hover:opacity-90 shadow-lg'
                 }`}
         >
             {isLoading ? (
