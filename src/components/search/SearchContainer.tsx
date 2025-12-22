@@ -14,6 +14,7 @@ import TypingText from '@/components/ui/TypingText'
 import AnimatedCounter from '@/components/ui/AnimatedCounter'
 import FadeIn from '@/components/ui/FadeIn'
 import AnimatedBackground from '@/components/ui/AnimatedBackground'
+import HeroSlider from '@/components/ui/HeroSlider'
 
 // Category emoji mapping
 const categoryEmojis: Record<string, string> = {
@@ -85,6 +86,13 @@ interface Activity {
     activity_photos?: { id: string; photo_url: string }[]
 }
 
+interface SliderPhoto {
+    id: string
+    photo_url: string
+    activity_title: string
+    activity_date: string
+}
+
 interface SearchContainerProps {
     initialPosts: Post[]
     initialTotal: number
@@ -103,6 +111,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
     const [categories, setCategories] = useState<Category[]>([])
     const [schoolStats, setSchoolStats] = useState<SchoolStats | null>(null)
     const [recentActivities, setRecentActivities] = useState<Activity[]>([])
+    const [sliderPhotos, setSliderPhotos] = useState<SliderPhoto[]>([])
 
     const currentSearch = searchParams.get('q') || ''
     const currentCategory = searchParams.get('category') || ''
@@ -130,6 +139,22 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
             // Filter activities that have photos
             const withPhotos = activities.filter(a => a.activity_photos && a.activity_photos.length > 0)
             setRecentActivities(withPhotos.slice(0, 4))
+
+            // Prepare slider photos - get all photos from activities
+            const allPhotos: SliderPhoto[] = []
+            withPhotos.forEach(activity => {
+                if (activity.activity_photos) {
+                    activity.activity_photos.forEach(photo => {
+                        allPhotos.push({
+                            id: photo.id,
+                            photo_url: photo.photo_url,
+                            activity_title: activity.title,
+                            activity_date: activity.activity_date
+                        })
+                    })
+                }
+            })
+            setSliderPhotos(allPhotos.slice(0, 8)) // Limit to 8 photos for slider
         })
     }, [])
 
@@ -265,6 +290,18 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                     </form>
                 </div>
             </section>
+
+            {/* Photo Slider Section */}
+            {sliderPhotos.length > 0 && (
+                <section className="py-8 bg-gray-50 dark:bg-gray-900">
+                    <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-6">
+                            📸 Dokumentasi Kegiatan
+                        </h2>
+                        <HeroSlider photos={sliderPhotos} />
+                    </div>
+                </section>
+            )}
 
             {/* Quick Links Section */}
             <section className="py-12 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
