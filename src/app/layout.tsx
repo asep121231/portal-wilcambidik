@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/ui/Header";
 import Footer from "@/components/ui/Footer";
+import BackToTop from "@/components/ui/BackToTop";
 import { PWARegister } from "@/components/pwa/PWARegister";
 
 const inter = Inter({
@@ -64,6 +65,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
+        <BackToTop />
         <PWARegister />
       </body>
     </html>

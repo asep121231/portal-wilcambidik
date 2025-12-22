@@ -1,8 +1,80 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
+import { subscribeEmail } from '@/lib/actions/email'
 
 export default function Footer() {
+    const [email, setEmail] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!email) return
+
+        setIsLoading(true)
+        setMessage(null)
+
+        try {
+            const result = await subscribeEmail(email)
+            if (result.success) {
+                setMessage({ type: 'success', text: 'Berhasil! Cek email untuk verifikasi.' })
+                setEmail('')
+            } else {
+                setMessage({ type: 'error', text: result.error || 'Gagal berlangganan' })
+            }
+        } catch {
+            setMessage({ type: 'error', text: 'Terjadi kesalahan' })
+        }
+
+        setIsLoading(false)
+    }
+
     return (
         <footer className="bg-white border-t border-gray-200">
+            {/* Newsletter Section */}
+            <div className="bg-gradient-to-r from-purple-600 to-pink-500">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+                        <div className="text-center lg:text-left">
+                            <h3 className="text-2xl font-bold text-white mb-2">
+                                📬 Dapatkan Informasi Terbaru
+                            </h3>
+                            <p className="text-white/80">
+                                Langganan newsletter untuk update informasi langsung ke email Anda
+                            </p>
+                        </div>
+                        <form onSubmit={handleSubscribe} className="w-full lg:w-auto">
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <div className="relative">
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="Masukkan email Anda"
+                                        className="w-full sm:w-80 px-5 py-3.5 rounded-xl border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder:text-white/60 focus:outline-none focus:border-white/50 transition-colors"
+                                        required
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="px-6 py-3.5 bg-white text-purple-600 font-semibold rounded-xl hover:bg-purple-50 disabled:opacity-50 transition-all shadow-lg"
+                                >
+                                    {isLoading ? 'Memproses...' : 'Langganan'}
+                                </button>
+                            </div>
+                            {message && (
+                                <p className={`mt-3 text-sm ${message.type === 'success' ? 'text-green-200' : 'text-red-200'}`}>
+                                    {message.text}
+                                </p>
+                            )}
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             {/* Main Footer */}
             <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 md:py-16">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
