@@ -9,6 +9,7 @@ import ThemeToggle from './ThemeToggle'
 const navigation = [
     { name: 'Beranda', href: '/' },
     { name: 'Informasi', href: '/#info' },
+    { name: 'Galeri', href: '/galeri' },
     { name: 'Dokumen', href: '/dokumen' },
     { name: 'Data Sekolah', href: '/data-sekolah' },
 ]

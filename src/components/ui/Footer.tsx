@@ -112,6 +112,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/galeri" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                                    Galeri
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/dokumen" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                                     Dokumen
                                 </Link>
