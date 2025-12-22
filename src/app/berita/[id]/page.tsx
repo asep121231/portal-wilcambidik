@@ -161,9 +161,10 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden">
                     {/* Content Body */}
                     <div className="p-6 md:p-10">
-                        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
-                            {post.content}
-                        </div>
+                        <div
+                            className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: post.content }}
+                        />
                     </div>
 
                     {/* Attachments Section */}

@@ -2,8 +2,20 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createPost, updatePost } from '@/lib/actions/posts'
 import { uploadAttachment, deleteAttachment } from '@/lib/actions/attachments'
+
+// Dynamic import for RichTextEditor (SSR disabled)
+const RichTextEditor = dynamic(() => import('@/components/ui/RichTextEditor'), {
+    ssr: false,
+    loading: () => (
+        <div className="border border-gray-200 rounded-xl overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 p-2 h-12" />
+            <div className="min-h-[300px] p-4 animate-pulse bg-gray-100" />
+        </div>
+    ),
+})
 
 interface Category {
     id: string
@@ -127,13 +139,10 @@ export default function PostForm({ categories, existingPost }: PostFormProps) {
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Isi Berita <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    required
-                    rows={8}
+                <RichTextEditor
+                    content={content}
+                    onChange={setContent}
                     placeholder="Tulis isi berita di sini..."
-                    className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
             </div>
 
