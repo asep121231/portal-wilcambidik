@@ -232,7 +232,7 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
         <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
             {/* Hero Section */}
             <section
-                className="py-16 md:py-24 bg-white dark:bg-gray-800 relative overflow-hidden"
+                className="pt-24 pb-12 md:pt-28 md:pb-16 bg-white dark:bg-gray-800 relative overflow-hidden"
                 style={{
                     backgroundImage: 'url(/images/hero-bg.png)',
                     backgroundSize: 'cover',
