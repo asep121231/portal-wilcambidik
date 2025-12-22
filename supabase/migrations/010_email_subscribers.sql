@@ -1,4 +1,4 @@
--- Create email_subscribers table
+-- Create email_subscribers table (if not exists)
 CREATE TABLE IF NOT EXISTS email_subscribers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -16,6 +16,13 @@ CREATE INDEX IF NOT EXISTS idx_email_subscribers_verified ON email_subscribers(v
 
 -- Enable RLS
 ALTER TABLE email_subscribers ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies first (if any)
+DROP POLICY IF EXISTS "Allow public insert on email_subscribers" ON email_subscribers;
+DROP POLICY IF EXISTS "Allow authenticated select on email_subscribers" ON email_subscribers;
+DROP POLICY IF EXISTS "Allow authenticated update on email_subscribers" ON email_subscribers;
+DROP POLICY IF EXISTS "Allow authenticated delete on email_subscribers" ON email_subscribers;
+DROP POLICY IF EXISTS "Allow public verify on email_subscribers" ON email_subscribers;
 
 -- Policy: Allow public to subscribe (insert)
 CREATE POLICY "Allow public insert on email_subscribers" ON email_subscribers
@@ -36,9 +43,3 @@ CREATE POLICY "Allow authenticated update on email_subscribers" ON email_subscri
 CREATE POLICY "Allow authenticated delete on email_subscribers" ON email_subscribers
     FOR DELETE
     USING (auth.role() = 'authenticated');
-
--- Policy: Allow public to verify their own subscription (update)
-CREATE POLICY "Allow public verify on email_subscribers" ON email_subscribers
-    FOR UPDATE
-    USING (verification_token IS NOT NULL)
-    WITH CHECK (verified = true);
