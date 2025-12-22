@@ -382,8 +382,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                         <div className="w-px h-8 bg-gradient-to-b from-purple-400 to-blue-400" />
                     </div>
 
-                    {/* Team Members - 3 columns */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Pengawas - 2 columns */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                         {/* Pengawas 1 */}
                         <FadeIn delay={100}>
                             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all">
@@ -417,10 +417,12 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                 </div>
                             </div>
                         </FadeIn>
+                    </div>
 
-                        {/* Tenaga Teknis */}
-                        <FadeIn delay={300}>
-                            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-green-300 dark:hover:border-green-600 transition-all">
+                    {/* Tenaga Teknis - Below Pengawas */}
+                    <FadeIn delay={300}>
+                        <div className="flex justify-center mt-4">
+                            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-green-300 dark:hover:border-green-600 transition-all max-w-xs w-full">
                                 <div className="flex items-center gap-4">
                                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-500 to-emerald-400 p-0.5 flex-shrink-0">
                                         <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
@@ -433,8 +435,8 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
                                     </div>
                                 </div>
                             </div>
-                        </FadeIn>
-                    </div>
+                        </div>
+                    </FadeIn>
                 </div>
             </section>
 
