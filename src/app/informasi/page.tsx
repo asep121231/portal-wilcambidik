@@ -10,7 +10,8 @@ import { PostCardSkeleton } from '@/components/ui/Loading'
 interface Category {
     id: string
     name: string
-    icon: string | null
+    icon?: string | null
+    created_at?: string
 }
 
 export default function InformasiPage() {
