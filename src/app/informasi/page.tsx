@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { searchPosts, type SearchResult } from '@/lib/actions/search'
+import Image from 'next/image'
+import { getPostsWithThumbnails, type PostWithThumbnail } from '@/lib/actions/posts'
 import { getCategories } from '@/lib/actions/categories'
 import { PostCardSkeleton } from '@/components/ui/Loading'
 
@@ -13,7 +14,7 @@ interface Category {
 }
 
 export default function InformasiPage() {
-    const [posts, setPosts] = useState<SearchResult[]>([])
+    const [posts, setPosts] = useState<PostWithThumbnail[]>([])
     const [categories, setCategories] = useState<Category[]>([])
     const [selectedCategory, setSelectedCategory] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
@@ -32,12 +33,12 @@ export default function InformasiPage() {
     useEffect(() => {
         async function fetchPosts() {
             setIsLoading(true)
-            const result = await searchPosts({
+            const result = await getPostsWithThumbnails({
                 categoryId: selectedCategory || undefined,
                 page: currentPage,
                 limit: postsPerPage,
             })
-            setPosts(result.data)
+            setPosts(result.posts)
             setTotalPages(Math.max(1, Math.ceil(result.total / postsPerPage)))
             setIsLoading(false)
         }
@@ -147,21 +148,43 @@ export default function InformasiPage() {
                                     href={`/berita/${post.id}`}
                                     className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                                 >
-                                    {/* Card Header with Gradient */}
-                                    <div className="h-32 bg-gradient-to-br from-purple-500 to-orange-400 relative">
-                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                                        <div className="absolute bottom-3 left-3">
+                                    {/* Card Header with Image or Gradient */}
+                                    <div className="h-40 relative overflow-hidden">
+                                        {post.thumbnail_url ? (
+                                            <Image
+                                                src={post.thumbnail_url}
+                                                alt={post.title}
+                                                fill
+                                                className="object-cover transition-transform group-hover:scale-105"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-purple-500 to-orange-400 flex items-center justify-center">
+                                                <span className="text-6xl opacity-30">📰</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+
+                                        {/* Urgency Badge */}
+                                        <div className="absolute top-3 left-3 flex gap-2">
                                             {post.urgency === 'urgent' && (
-                                                <span className="px-2 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
-                                                    MENDESAK
+                                                <span className="px-2 py-1 bg-red-500 text-white text-xs font-medium rounded-full shadow-lg">
+                                                    🔴 MENDESAK
                                                 </span>
                                             )}
                                             {post.urgency === 'deadline' && (
-                                                <span className="px-2 py-1 bg-yellow-500 text-white text-xs font-medium rounded-full">
-                                                    BATAS WAKTU
+                                                <span className="px-2 py-1 bg-yellow-500 text-white text-xs font-medium rounded-full shadow-lg">
+                                                    ⏰ BATAS WAKTU
                                                 </span>
                                             )}
                                         </div>
+
+                                        {/* Attachment indicator */}
+                                        {post.attachment_count > 0 && (
+                                            <div className="absolute top-3 right-3 px-2 py-1 bg-white/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-200 text-xs font-medium rounded-full shadow-lg flex items-center gap-1">
+                                                📎 {post.attachment_count}
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Card Content */}

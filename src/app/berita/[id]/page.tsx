@@ -7,6 +7,7 @@ import CopyLinkButton from '@/components/ui/CopyLinkButton'
 import ReadingTime from '@/components/ui/ReadingTime'
 import RelatedPosts from '@/components/ui/RelatedPosts'
 import ViewTracker from '@/components/ui/ViewTracker'
+import AttachmentPreview from '@/components/ui/AttachmentPreview'
 import type { PostDetail } from '@/types/database'
 import type { Metadata } from 'next'
 
@@ -179,37 +180,7 @@ export default async function PostPage({ params }: PostPageProps) {
                                 <span>Lampiran ({post.attachments.length})</span>
                             </h2>
 
-                            <div className="grid gap-3 md:grid-cols-2">
-                                {post.attachments.map((att) => {
-                                    const fileStyle = getFileIcon(att.file_name)
-                                    return (
-                                        <a
-                                            key={att.id}
-                                            href={att.file_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="group flex items-center gap-4 p-4 bg-white border border-gray-200 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50 rounded-xl transition-all"
-                                        >
-                                            <div className={`w-12 h-12 ${fileStyle.bg} rounded-xl flex items-center justify-center text-2xl flex-shrink-0`}>
-                                                {fileStyle.icon}
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-medium text-gray-900 truncate group-hover:text-purple-700 transition-colors">
-                                                    {att.file_name}
-                                                </p>
-                                                <p className="text-xs text-gray-500 mt-0.5">
-                                                    Klik untuk mengunduh
-                                                </p>
-                                            </div>
-                                            <div className="w-10 h-10 bg-purple-100 group-hover:bg-purple-600 rounded-xl flex items-center justify-center transition-colors flex-shrink-0">
-                                                <svg className="w-5 h-5 text-purple-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                                </svg>
-                                            </div>
-                                        </a>
-                                    )
-                                })}
-                            </div>
+                            <AttachmentPreview attachments={post.attachments} />
                         </div>
                     )}
                 </div>
