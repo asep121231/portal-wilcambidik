@@ -354,9 +354,12 @@ export default function AdminGalleryPage() {
                             {/* Photos Grid */}
                             <div className="p-4 bg-gray-50">
                                 <div className="flex items-center justify-between mb-3">
-                                    <p className="text-sm font-medium text-gray-700">
-                                        📷 Foto ({activity.activity_photos?.length || 0})
-                                    </p>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-700">
+                                            📷 Foto ({activity.activity_photos?.length || 0})
+                                        </p>
+                                        <p className="text-xs text-gray-400">Maks. 5MB per foto (JPEG, PNG, GIF, WebP)</p>
+                                    </div>
                                     <label className="flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white text-xs font-medium rounded-lg cursor-pointer hover:bg-purple-700">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -365,7 +368,7 @@ export default function AdminGalleryPage() {
                                         <input
                                             type="file"
                                             multiple
-                                            accept="image/*"
+                                            accept="image/jpeg,image/png,image/gif,image/webp"
                                             className="hidden"
                                             onChange={(e) => e.target.files && handlePhotoUpload(activity.id, e.target.files)}
                                             disabled={uploadingPhotos}
