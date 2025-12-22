@@ -9,6 +9,7 @@ import { PostCardSkeleton } from '@/components/ui/Loading'
 import TypingText from '@/components/ui/TypingText'
 import AnimatedCounter from '@/components/ui/AnimatedCounter'
 import FadeIn from '@/components/ui/FadeIn'
+import AnimatedBackground from '@/components/ui/AnimatedBackground'
 
 // Category emoji mapping
 const categoryEmojis: Record<string, string> = {
@@ -131,6 +132,9 @@ export default function SearchContainer({ initialPosts, initialTotal }: SearchCo
             >
                 {/* Overlay for better text readability */}
                 <div className="absolute inset-0 bg-white/40 dark:bg-gray-800/60" />
+
+                {/* Animated particle background */}
+                <AnimatedBackground />
 
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 text-center relative z-10">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
