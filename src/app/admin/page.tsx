@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { getDashboardStats, getPopularPosts, getDailyStats } from '@/lib/actions/analytics'
+import { getDashboardStats, getPopularPosts, getDailyStats, getVisitorStats } from '@/lib/actions/analytics'
 
 async function getRecentPosts() {
     const supabase = await createClient()
@@ -15,11 +15,12 @@ async function getRecentPosts() {
 }
 
 export default async function AdminDashboardPage() {
-    const [stats, recentPosts, popularPosts, dailyStats] = await Promise.all([
+    const [stats, recentPosts, popularPosts, dailyStats, visitorStats] = await Promise.all([
         getDashboardStats(),
         getRecentPosts(),
         getPopularPosts(5),
         getDailyStats(7),
+        getVisitorStats(30),
     ])
 
     return (
@@ -191,6 +192,87 @@ export default async function AdminDashboardPage() {
                     )}
                 </div>
             </div>
+
+            {/* Visitor Analytics Section */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-semibold text-gray-900">📊 Analisis Pengunjung (30 Hari)</h2>
+                    <Link href="/admin/analytics" className="text-sm text-purple-600 hover:text-purple-700">
+                        Detail →
+                    </Link>
+                </div>
+
+                {/* Visitor Stats Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-blue-50 rounded-lg p-4 text-center">
+                        <p className="text-2xl font-bold text-blue-600">{visitorStats.totalVisits.toLocaleString()}</p>
+                        <p className="text-xs text-gray-600">Total Kunjungan</p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-4 text-center">
+                        <p className="text-2xl font-bold text-green-600">{visitorStats.uniqueVisitors.toLocaleString()}</p>
+                        <p className="text-xs text-gray-600">Pengunjung Unik</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-4 text-center">
+                        <p className="text-2xl font-bold text-purple-600">
+                            {visitorStats.deviceStats.find(d => d.device === 'mobile')?.count || 0}
+                        </p>
+                        <p className="text-xs text-gray-600">📱 Mobile</p>
+                    </div>
+                    <div className="bg-orange-50 rounded-lg p-4 text-center">
+                        <p className="text-2xl font-bold text-orange-600">
+                            {visitorStats.deviceStats.find(d => d.device === 'desktop')?.count || 0}
+                        </p>
+                        <p className="text-xs text-gray-600">🖥️ Desktop</p>
+                    </div>
+                </div>
+
+                {/* Device & Browser Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Device Chart */}
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">Distribusi Perangkat</h3>
+                        <div className="space-y-2">
+                            {visitorStats.deviceStats.length === 0 ? (
+                                <p className="text-gray-400 text-sm">Belum ada data</p>
+                            ) : (
+                                visitorStats.deviceStats.slice(0, 3).map((device, i) => {
+                                    const percentage = visitorStats.totalVisits > 0 ? (device.count / visitorStats.totalVisits * 100).toFixed(0) : 0
+                                    return (
+                                        <div key={i} className="flex items-center gap-2">
+                                            <span className="text-sm capitalize w-16">{device.device}</span>
+                                            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-gradient-to-r from-purple-500 to-orange-400 rounded-full"
+                                                    style={{ width: `${percentage}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-xs text-gray-500 w-10">{percentage}%</span>
+                                        </div>
+                                    )
+                                })
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Top Pages */}
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">Halaman Terpopuler</h3>
+                        <div className="space-y-1">
+                            {visitorStats.topPages.length === 0 ? (
+                                <p className="text-gray-400 text-sm">Belum ada data</p>
+                            ) : (
+                                visitorStats.topPages.slice(0, 5).map((page, i) => (
+                                    <div key={i} className="flex items-center justify-between text-sm">
+                                        <span className="truncate flex-1">{page.page}</span>
+                                        <span className="text-gray-500 ml-2">{page.count}</span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
+
