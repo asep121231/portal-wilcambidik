@@ -54,7 +54,7 @@ export async function getActivities(categoryId?: string, publishedOnly = true): 
     let query = (supabase as any)
         .from('activities')
         .select('*, activity_categories(*), activity_photos(*)')
-        .order('activity_date', { ascending: false })
+        .order('created_at', { ascending: false })
 
     if (publishedOnly) {
         query = query.eq('status', 'published')
