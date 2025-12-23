@@ -161,18 +161,44 @@ export default function AdminDocumentsPage() {
                             <button
                                 type="submit"
                                 disabled={isUploading}
-                                className="px-6 py-2.5 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                                className={`flex items-center gap-2 px-6 py-2.5 font-medium rounded-lg transition-all ${isUploading ? 'bg-purple-400 text-white cursor-wait' : 'bg-purple-600 text-white hover:bg-purple-700'}`}
                             >
-                                {isUploading ? 'Mengupload...' : 'Upload Dokumen'}
+                                {isUploading ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        Mengupload...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        Upload Dokumen
+                                    </>
+                                )}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowForm(false)}
-                                className="px-6 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                                disabled={isUploading}
+                                className="px-6 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
                             >
                                 Batal
                             </button>
                         </div>
+
+                        {/* Upload Progress Bar */}
+                        {isUploading && (
+                            <div className="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                                <div className="w-8 h-8 border-3 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-purple-700">Mengunggah dokumen...</p>
+                                    <div className="mt-1 h-1.5 bg-purple-100 rounded-full overflow-hidden">
+                                        <div className="h-full w-1/3 bg-gradient-to-r from-purple-600 to-orange-500 rounded-full animate-progress-indeterminate" />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </form>
                 </div>
             )}

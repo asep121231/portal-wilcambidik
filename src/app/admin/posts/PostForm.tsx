@@ -202,6 +202,19 @@ export default function PostForm({ categories, existingPost }: PostFormProps) {
                         Lampiran
                     </label>
 
+                    {/* Upload Progress */}
+                    {isUploading && (
+                        <div className="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-xl mb-3">
+                            <div className="w-8 h-8 border-3 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-purple-700">Mengunggah file...</p>
+                                <div className="mt-1 h-1.5 bg-purple-100 rounded-full overflow-hidden">
+                                    <div className="h-full w-1/3 bg-gradient-to-r from-purple-600 to-orange-500 rounded-full animate-progress-indeterminate" />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {attachments.length > 0 && (
                         <div className="space-y-2 mb-3">
                             {attachments.map((att) => (
@@ -219,12 +232,12 @@ export default function PostForm({ categories, existingPost }: PostFormProps) {
                         </div>
                     )}
 
-                    <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-400 cursor-pointer transition-colors">
+                    <label className={`flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-xl transition-colors ${isUploading ? 'border-purple-400 bg-purple-50 cursor-wait' : 'border-gray-200 hover:border-blue-400 cursor-pointer'}`}>
                         <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                         <span className="text-sm text-gray-500">
-                            {isUploading ? 'Mengunggah...' : 'Klik untuk upload file'}
+                            {isUploading ? 'Mohon tunggu...' : 'Klik untuk upload file'}
                         </span>
                         <input
                             type="file"
