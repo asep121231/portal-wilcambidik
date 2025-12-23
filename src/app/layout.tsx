@@ -7,6 +7,7 @@ import BackToTop from "@/components/ui/BackToTop";
 import { PWARegister } from "@/components/pwa/PWARegister";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import PageTracker from "@/components/analytics/PageTracker";
+import { headers } from "next/headers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -49,11 +50,15 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || headersList.get("x-invoke-path") || "";
+  const isAdminPage = pathname.startsWith("/admin");
+
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
@@ -78,9 +83,9 @@ export default function RootLayout({
         <ThemeProvider>
           <PageTracker />
           <div className="flex flex-col min-h-screen">
-            <Header />
+            {!isAdminPage && <Header />}
             <main className="flex-1">{children}</main>
-            <Footer />
+            {!isAdminPage && <Footer />}
           </div>
           <BackToTop />
           <PWARegister />
