@@ -191,7 +191,7 @@ export async function trackDocumentDownload(documentId: string, userAgent?: stri
     const ipHash = Math.random().toString(36).substring(2, 15)
 
     try {
-        // Record download in document_downloads table
+        // Record download in document_downloads table (for detailed analytics)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase as any)
             .from('document_downloads')
@@ -200,12 +200,26 @@ export async function trackDocumentDownload(documentId: string, userAgent?: stri
                 user_agent: userAgent || null,
                 ip_hash: ipHash,
             })
+            .catch(() => {
+                // Table might not exist yet
+            })
 
-        // Also increment the download_count on the document
+        // Get current download count
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase as any).rpc('increment_download_count', { doc_id: documentId }).catch(() => {
-            // Silently fail - download count is not critical
-        })
+        const { data: doc } = await (supabase as any)
+            .from('documents')
+            .select('download_count')
+            .eq('id', documentId)
+            .single()
+
+        const currentCount = doc?.download_count || 0
+
+        // Increment download_count on the document
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
+            .from('documents')
+            .update({ download_count: currentCount + 1 })
+            .eq('id', documentId)
     } catch (error) {
         console.error('Error tracking document download:', error)
     }
