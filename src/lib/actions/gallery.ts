@@ -74,6 +74,44 @@ export async function getActivities(categoryId?: string, publishedOnly = true): 
     return data || []
 }
 
+export async function getActivitiesWithPagination(options: {
+    categoryId?: string
+    page?: number
+    limit?: number
+    publishedOnly?: boolean
+}): Promise<{ activities: Activity[]; total: number }> {
+    const supabase = await createClient()
+
+    const page = options.page || 1
+    const limit = options.limit || 9
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
+        .from('activities')
+        .select('*, activity_categories(*), activity_photos(*)', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to)
+
+    if (options.publishedOnly !== false) {
+        query = query.eq('status', 'published')
+    }
+
+    if (options.categoryId) {
+        query = query.eq('category_id', options.categoryId)
+    }
+
+    const { data, error, count } = await query
+
+    if (error) {
+        console.error('Error fetching activities with pagination:', error)
+        return { activities: [], total: 0 }
+    }
+
+    return { activities: data || [], total: count || 0 }
+}
+
 export async function getActivity(id: string): Promise<Activity | null> {
     const supabase = await createClient()
 
