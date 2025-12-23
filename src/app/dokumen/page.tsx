@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getDocuments, getDocumentCategories, type Document, type DocumentCategory } from '@/lib/actions/documents'
+import { getDocuments, getDocumentCategories, trackDocumentDownload, type Document, type DocumentCategory } from '@/lib/actions/documents'
 
 // File type icons
 const fileIcons: Record<string, { icon: string; bg: string }> = {
@@ -34,6 +34,7 @@ export default function DocumentsPage() {
     const [categories, setCategories] = useState<DocumentCategory[]>([])
     const [selectedCategory, setSelectedCategory] = useState('')
     const [isLoading, setIsLoading] = useState(true)
+    const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({})
 
     useEffect(() => {
         async function loadData() {
@@ -43,6 +44,10 @@ export default function DocumentsPage() {
             ])
             setDocuments(docs)
             setCategories(cats)
+            // Initialize download counts from documents
+            const counts: Record<string, number> = {}
+            docs.forEach(d => { counts[d.id] = d.download_count })
+            setDownloadCounts(counts)
             setIsLoading(false)
         }
         loadData()
@@ -53,7 +58,22 @@ export default function DocumentsPage() {
         setIsLoading(true)
         const docs = await getDocuments(categoryId || undefined)
         setDocuments(docs)
+        const counts: Record<string, number> = {}
+        docs.forEach(d => { counts[d.id] = d.download_count })
+        setDownloadCounts(counts)
         setIsLoading(false)
+    }
+
+    const handleDownload = async (doc: Document) => {
+        // Track download
+        await trackDocumentDownload(doc.id, navigator.userAgent)
+        // Update local count
+        setDownloadCounts(prev => ({
+            ...prev,
+            [doc.id]: (prev[doc.id] || 0) + 1
+        }))
+        // Open file
+        window.open(doc.file_url, '_blank')
     }
 
     return (
@@ -161,19 +181,22 @@ export default function DocumentsPage() {
                                             <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                                                 <span>{formatFileSize(doc.file_size)}</span>
                                                 <span>•</span>
-                                                <span>{doc.download_count} unduhan</span>
+                                                <span className="flex items-center gap-1">
+                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                    {downloadCounts[doc.id] || 0} unduhan
+                                                </span>
                                             </div>
-                                            <a
-                                                href={doc.file_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                            <button
+                                                onClick={() => handleDownload(doc)}
                                                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-orange-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                 </svg>
                                                 Unduh
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 )

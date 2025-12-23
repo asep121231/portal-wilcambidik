@@ -185,11 +185,52 @@ export async function deleteDocument(id: string) {
     }
 }
 
-export async function incrementDownloadCount(id: string) {
+export async function trackDocumentDownload(documentId: string, userAgent?: string) {
     const supabase = await createClient()
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).rpc('increment_download_count', { doc_id: id }).catch(() => {
-        // Silently fail - download count is not critical
-    })
+    const ipHash = Math.random().toString(36).substring(2, 15)
+
+    try {
+        // Record download in document_downloads table
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
+            .from('document_downloads')
+            .insert({
+                document_id: documentId,
+                user_agent: userAgent || null,
+                ip_hash: ipHash,
+            })
+
+        // Also increment the download_count on the document
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any).rpc('increment_download_count', { doc_id: documentId }).catch(() => {
+            // Silently fail - download count is not critical
+        })
+    } catch (error) {
+        console.error('Error tracking document download:', error)
+    }
+}
+
+export async function getDocumentDownloadCounts(): Promise<Record<string, number>> {
+    const supabase = await createClient()
+
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data } = await (supabase as any)
+            .from('document_downloads')
+            .select('document_id')
+
+        if (!data) return {}
+
+        // Count downloads per document
+        const counts: Record<string, number> = {}
+        data.forEach((row: { document_id: string }) => {
+            counts[row.document_id] = (counts[row.document_id] || 0) + 1
+        })
+
+        return counts
+    } catch (error) {
+        console.error('Error getting document download counts:', error)
+        return {}
+    }
 }
