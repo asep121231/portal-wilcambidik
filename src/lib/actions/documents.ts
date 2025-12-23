@@ -188,10 +188,19 @@ export async function deleteDocument(id: string) {
 export async function trackDocumentDownload(documentId: string, userAgent?: string) {
     const supabase = await createClient()
 
-    const ipHash = Math.random().toString(36).substring(2, 15)
-
     try {
-        // Record download in document_downloads table (for detailed analytics)
+        // Increment download_count using RPC function (bypasses RLS)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase as any).rpc('increment_download_count', {
+            doc_id: documentId
+        })
+
+        if (error) {
+            console.error('Error incrementing download count:', error)
+        }
+
+        // Also try to record in document_downloads table for detailed analytics
+        const ipHash = Math.random().toString(36).substring(2, 15)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase as any)
             .from('document_downloads')
@@ -201,25 +210,8 @@ export async function trackDocumentDownload(documentId: string, userAgent?: stri
                 ip_hash: ipHash,
             })
             .catch(() => {
-                // Table might not exist yet
+                // Table might not exist yet, that's ok
             })
-
-        // Get current download count
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: doc } = await (supabase as any)
-            .from('documents')
-            .select('download_count')
-            .eq('id', documentId)
-            .single()
-
-        const currentCount = doc?.download_count || 0
-
-        // Increment download_count on the document
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase as any)
-            .from('documents')
-            .update({ download_count: currentCount + 1 })
-            .eq('id', documentId)
     } catch (error) {
         console.error('Error tracking document download:', error)
     }
