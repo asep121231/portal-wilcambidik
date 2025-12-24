@@ -81,7 +81,7 @@ interface PostInput {
 }
 
 export async function createPost(input: PostInput) {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
         .from('posts')
@@ -107,7 +107,7 @@ export async function createPost(input: PostInput) {
 }
 
 export async function updatePost(id: string, input: PostInput) {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
         .from('posts')
@@ -135,7 +135,7 @@ export async function updatePost(id: string, input: PostInput) {
 }
 
 export async function deletePost(id: string) {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { error } = await supabase
         .from('posts')
@@ -154,7 +154,7 @@ export async function deletePost(id: string) {
 }
 
 export async function togglePostStatus(id: string) {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     // Get current status first
     const { data: post } = await supabase
