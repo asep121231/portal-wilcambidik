@@ -50,6 +50,28 @@ export async function getPost(id: string) {
     return data as PostDetail
 }
 
+// Admin version - bypasses RLS using service role
+export async function getPostAdmin(id: string) {
+    const supabase = await createAdminClient()
+
+    const { data, error } = await supabase
+        .from('posts')
+        .select(`
+      *,
+      categories (*),
+      attachments (*)
+    `)
+        .eq('id', id)
+        .single()
+
+    if (error) {
+        console.error('Error fetching post (admin):', error)
+        return null
+    }
+
+    return data as PostDetail
+}
+
 interface PostInput {
     title: string
     content: string

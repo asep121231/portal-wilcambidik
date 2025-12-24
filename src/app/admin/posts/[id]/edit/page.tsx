@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getPost } from '@/lib/actions/posts'
+import { getPostAdmin } from '@/lib/actions/posts'
 import { getCategories } from '@/lib/actions/categories'
 import PostForm from '../../PostForm'
 
@@ -11,7 +11,7 @@ interface EditPostPageProps {
 export default async function EditPostPage({ params }: EditPostPageProps) {
     const { id } = await params
     const [post, categories] = await Promise.all([
-        getPost(id),
+        getPostAdmin(id),
         getCategories()
     ])
 
